@@ -57,16 +57,9 @@ app.get("/", (req, res) => {
 app.get("/question1", async (req, res) => {
   let questionData = await QuestionTemplate.findOne({
     order: Sequelize.literal("rand()"),
-    attributes: [
-      "template",
-      "is_first",
-      "table_name",
-      "model_name",
-      "column_name",
-      "type",
-    ],
+    where: { type: 2 },
+    attributes: ["template", "table_name", "model_name", "column_name"],
   });
-
   let type = questionData.type;
   let optionsData = "";
 
@@ -79,15 +72,18 @@ app.get("/question1", async (req, res) => {
   } else if (type === 3 || type === 4) {
     optionsData = [true, false];
   } else {
+    let template = questionData.template;
+    const qustionX = await Country.findOne({
+      order: Sequelize.literal("rand()"),
+      attributes: ["name"],
+    });
+    let tmp = qustionX.name;
+    questionData.template = template.replace("X", tmp);
+
     let modelName = questionData.model_name;
-    console.log(modelName);
-
     let columnName = questionData.column_name;
-    console.log(columnName);
-
     for (model of models) {
       if (model.name === modelName) {
-        console.log("moran");
         optionsData = await model.findAll({
           order: Sequelize.literal("rand()"),
           attributes: [columnName],
