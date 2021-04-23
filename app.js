@@ -1,26 +1,27 @@
 const express = require("express");
 const app = express();
-// const morgan = require("morgan");
+const morgan = require("morgan");
 const Sequelize = require("sequelize");
+const { snakeToPascal } = require("./utils");
 
-// morgan.token("reqbody", (req) => {
-//   const newObject = {};
-//   for (const key in req.body) {
-//     if (JSON.stringify(req.body[key]).length > 100) {
-//       newObject[key] = "Too many to print...";
-//       continue;
-//     }
-//     newObject[key] = req.body[key];
-//   }
-//   return JSON.stringify(newObject);
-// });
+morgan.token("reqbody", (req) => {
+  const newObject = {};
+  for (const key in req.body) {
+    if (JSON.stringify(req.body[key]).length > 100) {
+      newObject[key] = "Too many to print...";
+      continue;
+    }
+    newObject[key] = req.body[key];
+  }
+  return JSON.stringify(newObject);
+});
 
-// app.use(express.json());
-// app.use(
-//   morgan(
-//     ":method :url :status :res[content-length] - :response-time ms :reqbody"
-//   )
-// );
+app.use(express.json());
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :reqbody"
+  )
+);
 app.use(express.static("./client/build"));
 
 const {
@@ -34,6 +35,17 @@ const {
   QuestionTemplate,
 } = require("./models");
 
+const models = [
+  Country,
+  CrimeIndex,
+  Capital,
+  CostOfLivingIndex,
+  PopulationDensity,
+  QualityOfLifeIndex,
+  Player,
+  QuestionTemplate,
+];
+
 app.get("/", (req, res) => {
   Country.findAll({})
     .then(async (country) => {
@@ -45,8 +57,14 @@ app.get("/", (req, res) => {
 app.get("/question1", async (req, res) => {
   let questionData = await QuestionTemplate.findOne({
     order: Sequelize.literal("rand()"),
-    where: { type: 2 },
-    attributes: ["template", "is_first", "table_name", "column_name", "type"],
+    attributes: [
+      "template",
+      "is_first",
+      "table_name",
+      "model_name",
+      "column_name",
+      "type",
+    ],
   });
 
   let type = questionData.type;
@@ -61,40 +79,25 @@ app.get("/question1", async (req, res) => {
   } else if (type === 3 || type === 4) {
     optionsData = [true, false];
   } else {
-    const snakeToPascal = (string) => {
-      return string
-        .split("/")
-        .map((snake) =>
-          snake
-            .split("_")
-            .map((substr) => substr.charAt(0).toUpperCase() + substr.slice(1))
-            .join("")
-        )
-        .join("/");
-    };
-
-    const tableName = questionData.table_name;
-    const modelName = snakeToPascal(tableName);
-    // const columnName = snakeToCamel(questionData.column_name);
-
-    console.log(tableName);
+    let modelName = questionData.model_name;
     console.log(modelName);
-    console.log(typeof modelName);
 
-    // console.log(columnName);
-    optionsData = await Country.findAll({
-      order: Sequelize.literal("rand()"),
-      //   attributes: [columnName],
-      limit: 4,
-    });
+    let columnName = questionData.column_name;
+    console.log(columnName);
+
+    for (model of models) {
+      if (model.name === modelName) {
+        console.log("moran");
+        optionsData = await model.findAll({
+          order: Sequelize.literal("rand()"),
+          attributes: [columnName],
+          limit: 4,
+        });
+      }
+    }
   }
 
-  //table_name: "population_density" model:PopulationDensity
   const triviaQuestion = { question: questionData, options: optionsData };
-  //   console.log(optionsData);
-  //   console.log(JSON.stringify(questionData));
-  //   console.log(JSON.stringify(optionsData));
-  //   res.json(optionsData);
   res.json(triviaQuestion);
 });
 
