@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const Sequelize = require("sequelize");
+const sequelize = require("sequelize");
+const { Op } = require("sequelize");
+
 const { snakeToPascal } = require("./utils");
 
 morgan.token("reqbody", (req) => {
@@ -34,6 +37,7 @@ const {
   Player,
   QuestionTemplate,
 } = require("./models");
+const { or } = require("sequelize");
 
 const models = [
   Country,
@@ -54,12 +58,14 @@ app.get("/", (req, res) => {
     .catch((err) => console.log(err));
 });
 
-app.get("/question1", async (req, res) => {
+app.get("/question", async (req, res) => {
   let questionData = await QuestionTemplate.findOne({
     order: Sequelize.literal("rand()"),
-    where: { type: 2 },
-    attributes: ["template", "table_name", "model_name", "column_name"],
+    where: { [Op.and]: [{ type: 1 }, { is_first: 1 }] },
+    // attributes: ["template", "table_name", "model_name", "column_name", "type"],
   });
+  let modelName = questionData.model_name;
+  let columnName = questionData.column_name;
   let type = questionData.type;
   let optionsData = "";
 
@@ -69,6 +75,58 @@ app.get("/question1", async (req, res) => {
       attributes: ["name"],
       limit: 4,
     });
+    const names = optionsData.map((data) => {
+      console.log(data.toJSON().name);
+      return data.toJSON().name;
+    });
+    let relavantModel;
+    let relevantName;
+    switch (modelName) {
+      case "Country":
+        relavantModel = Country;
+        relevantName = "name";
+        break;
+      case "CrimeIndex":
+        relavantModel = CrimeIndex;
+        relevantName = "country";
+        break;
+      case "Capital":
+        relavantModel = Capital;
+        relevantName = "country";
+        break;
+      case "CostOfLivingIndex":
+        relavantModel = CostOfLivingIndex;
+        relevantName = "country";
+        break;
+      case "PopulationDensity":
+        relavantModel = PopulationDensity;
+        relevantName = "country_or_dependent_territory";
+        break;
+      case "QualityOfLifeIndex":
+        relavantModel = QualityOfLifeIndex;
+        relevantName = "country";
+        break;
+    }
+    const rowsFromRelevantTable = await relavantModel.findAll({
+      where: {
+        [Op.or]: [
+          {
+            [relevantName]: names[0],
+          },
+          {
+            [relevantName]: names[1],
+          },
+          {
+            [relevantName]: names[2],
+          },
+          {
+            [relevantName]: names[3],
+          },
+        ],
+      },
+    });
+
+    rowsFromRelevantTable.map((data) => console.log(data.toJSON()));
   } else if (type === 3 || type === 4) {
     optionsData = [true, false];
   } else {
@@ -80,14 +138,19 @@ app.get("/question1", async (req, res) => {
     let tmp = qustionX.name;
     questionData.template = template.replace("X", tmp);
 
-    let modelName = questionData.model_name;
-    let columnName = questionData.column_name;
     for (model of models) {
       if (model.name === modelName) {
         optionsData = await model.findAll({
           order: Sequelize.literal("rand()"),
+          // where: {
+          //   [Op.or]: [
+          //     { country: tmp },
+          //     { name: tmp },
+          //     { country_or_dependent_territory: tmp },
+          //   ],
+          // },
           attributes: [columnName],
-          limit: 4,
+          limit: 3,
         });
       }
     }
