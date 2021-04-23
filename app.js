@@ -68,6 +68,7 @@ app.get("/question", async (req, res) => {
   let columnName = questionData.column_name;
   let type = questionData.type;
   let optionsData = "";
+  let allTheOption;
 
   if (type === 1) {
     optionsData = await Country.findAll({
@@ -112,20 +113,31 @@ app.get("/question", async (req, res) => {
       where: {[relevantName]:names},
       attributes: [columnName]
     });
+    console.log(rowsFromRelevantTable[0].toJSON()[columnName])
     const answer=(rowsFromRelevantTable[0].toJSON()[columnName]
     )
-    console.log(answer)
-    const other3Options = await relavantModel.findAll({
-      where: {[columnName]:{[Op.gt]: answer}},
-      // attributes: [columnName]
-      limit:3
-    });
+    const is_first=(questionData.toJSON()["is_first"])
+    // console.log(questionData.toJSON()["is_first"])
+    let other3Options;
+    if(is_first){
+      other3Options = await relavantModel.findAll({
+        where: {[columnName]:{[Op.gt]: answer}},
+        // attributes: [columnName]
+        limit:3
+      });
+    }else{
+       other3Options = await relavantModel.findAll({
+        where: {[columnName]:{[Op.lt]: answer}},
+        // attributes: [columnName]
+        limit:3
+      });
+    }
     const name = other3Options.map((data) => {
       console.log(data.toJSON()[relevantName]);
       return data.toJSON()[relevantName];
     });
     console.log(name[0])
-    const allTheOption={answer:{answerNumber:answer,answerName:names},option1:{option1Name:name[0]},option2:{option2Name:name[1]},option3:{option3Name:name[2]}}
+     allTheOption={answer:{answerNumber:answer,answerName:names},option1:{option1Name:name[0]},option2:{option2Name:name[1]},option3:{option3Name:name[2]}}
     console.log(allTheOption)
     // const rowsFromRelevantTable = await relavantModel.findAll({
     //   where: {
@@ -176,7 +188,7 @@ app.get("/question", async (req, res) => {
     }
   }
 
-  const triviaQuestion = { question: questionData, options: optionsData };
+  const triviaQuestion = { question: questionData, options: allTheOption };
   res.json(triviaQuestion);
 });
 
