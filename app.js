@@ -5,7 +5,7 @@ const Sequelize = require("sequelize");
 const sequelize = require("sequelize");
 const { Op } = require("sequelize");
 
-const { snakeToPascal } = require("./utils");
+// const { snakeToPascal } = require("./utils");
 
 morgan.token("reqbody", (req) => {
   const newObject = {};
@@ -73,12 +73,13 @@ app.get("/question", async (req, res) => {
     optionsData = await Country.findAll({
       order: Sequelize.literal("rand()"),
       attributes: ["name"],
-      limit: 4,
+      limit: 1,
     });
     const names = optionsData.map((data) => {
       console.log(data.toJSON().name);
       return data.toJSON().name;
     });
+    console.log(names)
     let relavantModel;
     let relevantName;
     switch (modelName) {
@@ -107,26 +108,45 @@ app.get("/question", async (req, res) => {
         relevantName = "country";
         break;
     }
-    const rowsFromRelevantTable = await relavantModel.findAll({
-      where: {
-        [Op.or]: [
-          {
-            [relevantName]: names[0],
-          },
-          {
-            [relevantName]: names[1],
-          },
-          {
-            [relevantName]: names[2],
-          },
-          {
-            [relevantName]: names[3],
-          },
-        ],
-      },
+        const rowsFromRelevantTable = await relavantModel.findAll({
+      where: {[relevantName]:names},
+      attributes: [columnName]
     });
+    const answer=(rowsFromRelevantTable[0].toJSON()[columnName]
+    )
+    console.log(answer)
+    const other3Options = await relavantModel.findAll({
+      where: {[columnName]:{[Op.gt]: answer}},
+      // attributes: [columnName]
+      limit:3
+    });
+    const name = other3Options.map((data) => {
+      console.log(data.toJSON()[relevantName]);
+      return data.toJSON()[relevantName];
+    });
+    console.log(name[0])
+    const allTheOption={answer:{answerNumber:answer,answerName:names},option1:{option1Name:name[0]},option2:{option2Name:name[1]},option3:{option3Name:name[2]}}
+    console.log(allTheOption)
+    // const rowsFromRelevantTable = await relavantModel.findAll({
+    //   where: {
+    //     [Op.or]: [
+    //       {
+    //         [relevantName]: names[0],
+    //       },
+    //       {
+    //         [relevantName]: names[1],
+    //       },
+    //       {
+    //         [relevantName]: names[2],
+    //       },
+    //       {
+    //         [relevantName]: names[3],
+    //       },
+    //     ],
+    //   },
+    // });
 
-    rowsFromRelevantTable.map((data) => console.log(data.toJSON()));
+    // rowsFromRelevantTable.map((data) => console.log(data.toJSON()));
   } else if (type === 3 || type === 4) {
     optionsData = [true, false];
   } else {
