@@ -50,6 +50,7 @@ const models = [
   QuestionTemplate,
 ];
 
+
 app.get("/", (req, res) => {
   Country.findAll({})
     .then(async (country) => {
@@ -61,7 +62,7 @@ app.get("/", (req, res) => {
 app.get("/question", async (req, res) => {
   let questionData = await QuestionTemplate.findOne({
     order: Sequelize.literal("rand()"),
-    where: { [Op.and]: [{ type: 1 }, { is_first: 1 }] },
+    where: { [Op.and]: [{ type: 3 }, { is_first: 1 }] },
     // attributes: ["template", "table_name", "model_name", "column_name", "type"],
   });
   let modelName = questionData.model_name;
@@ -69,7 +70,31 @@ app.get("/question", async (req, res) => {
   let type = questionData.type;
   let optionsData = "";
   let allTheOption;
-
+  switch (modelName) {
+    case "Country":
+      relavantModel = Country;
+      relevantName = "name";
+      break;
+    case "CrimeIndex":
+      relavantModel = CrimeIndex;
+      relevantName = "country";
+      break;
+    case "Capital":
+      relavantModel = Capital;
+      relevantName = "country";
+      break;
+    case "CostOfLivingIndex":
+      relavantModel = CostOfLivingIndex;
+      relevantName = "country";
+      break;
+    case "PopulationDensity":
+      relavantModel = PopulationDensity;
+      relevantName = "country_or_dependent_territory";
+      break;
+    case "QualityOfLifeIndex":
+      relavantModel = QualityOfLifeIndex;
+      relevantName = "country";
+      break;}
   if (type === 1) {
     optionsData = await Country.findAll({
       order: Sequelize.literal("rand()"),
@@ -83,32 +108,7 @@ app.get("/question", async (req, res) => {
     console.log(names)
     let relavantModel;
     let relevantName;
-    switch (modelName) {
-      case "Country":
-        relavantModel = Country;
-        relevantName = "name";
-        break;
-      case "CrimeIndex":
-        relavantModel = CrimeIndex;
-        relevantName = "country";
-        break;
-      case "Capital":
-        relavantModel = Capital;
-        relevantName = "country";
-        break;
-      case "CostOfLivingIndex":
-        relavantModel = CostOfLivingIndex;
-        relevantName = "country";
-        break;
-      case "PopulationDensity":
-        relavantModel = PopulationDensity;
-        relevantName = "country_or_dependent_territory";
-        break;
-      case "QualityOfLifeIndex":
-        relavantModel = QualityOfLifeIndex;
-        relevantName = "country";
-        break;
-    }
+
         const rowsFromRelevantTable = await relavantModel.findAll({
       where: {[relevantName]:names},
       attributes: [columnName]
@@ -160,7 +160,32 @@ app.get("/question", async (req, res) => {
 
     // rowsFromRelevantTable.map((data) => console.log(data.toJSON()));
   } else if (type === 3 || type === 4) {
+    optionsData = await Country.findAll({
+      order: Sequelize.literal("rand()"),
+      attributes: ["name"],
+      limit: 2,
+    });
+    const names = optionsData.map((data) => {
+      console.log(data.toJSON().name);
+      return data.toJSON().name;
+    });
+    const rowsFromRelevantTable = await relavantModel.findAll({
+      where: {[Op.or]:[{[relevantName]:names[0]},{[relevantName]:names[1]}]},
+      attributes: [columnName]
+    });
+
+    console.log(rowsFromRelevantTable)
+    const answer1=(rowsFromRelevantTable[0].toJSON()[columnName])
+    // console.log(answer1)
+    const answer2=(rowsFromRelevantTable[1].toJSON()[columnName])
+    // console.log(answer2)
+    const is_first=(questionData.toJSON()["is_first"])
+    // console.log(answer1,answer2)
     optionsData = [true, false];
+    const answers = 
+      {answer1:answer1,answer1Country:names[0]
+    ,answer2:answer2,answer2Country:names[1]}
+    console.log(answers)
   } else {
     let template = questionData.template;
     const qustionX = await Country.findOne({
