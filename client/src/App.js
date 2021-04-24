@@ -10,19 +10,30 @@ function App() {
   let [count, setcount] = useState(0);
   let onButtonClick = (e) => {
     setcount(count+1)
+    // console.log(e.target.innerText);
     let clientAnswer1 = e.target.innerText
-
+    // setanswer("hi")
+    // console.log("answer is answer",answer)
+    // console.log("answer is clientAnswer",clientAnswer)
     setclientAnswer(clientAnswer1)
-
+    // if(clientAnswer===answer){
+    //   console.log("great")
+    // }
   };
   const getQuestion = () =>
     axios
       .get(`/question`)
       .then(({ data }) => {
-
+       
+        // console.log(data[0].options.answer);
         if (data) {
           const fullQuestion = data.map((fullQuestion, i) => {
-            setanswer(fullQuestion.options.answer1)
+            if(undefined===fullQuestion.options.answer1){
+              setanswer(fullQuestion.options.answer)
+            }else{
+
+              setanswer(fullQuestion.options.answer1)
+            }
             console.log(answer)
             return (
               <>
