@@ -5,7 +5,16 @@ const Sequelize = require("sequelize");
 const sequelize = require("sequelize");
 const { Op } = require("sequelize");
 const { or } = require("sequelize");
-// const { snakeToPascal } = require("./utils");
+const {
+  Country,
+  CrimeIndex,
+  Capital,
+  CostOfLivingIndex,
+  PopulationDensity,
+  QualityOfLifeIndex,
+  Player,
+  QuestionTemplate,
+} = require("./models");
 
 morgan.token("reqbody", (req) => {
   const newObject = {};
@@ -27,18 +36,6 @@ app.use(
 );
 app.use(express.static("./client/build"));
 
-const {
-  Country,
-  CrimeIndex,
-  Capital,
-  CostOfLivingIndex,
-  PopulationDensity,
-  QualityOfLifeIndex,
-  Player,
-  QuestionTemplate,
-} = require("./models");
-
-
 const models = [
   Country,
   CrimeIndex,
@@ -49,7 +46,6 @@ const models = [
   Player,
   QuestionTemplate,
 ];
-
 
 app.get("/", (req, res) => {
   Country.findAll({})
@@ -65,15 +61,14 @@ app.get("/question", async (req, res) => {
     where: { [Op.and]: [{ type: 2 }] },
     // attributes: ["template", "table_name", "model_name", "column_name", "type"],
   });
-  console.log(questionData)
-  let modelName = questionData.model_name;
-  console.log(modelName)
-  let columnName = questionData.column_name;
-  let type = questionData.type;
+  const modelName = questionData.model_name;
+  const columnName = questionData.column_name;
+  const type = questionData.type;
   let optionsData = "";
   let allTheOption;
   let relavantModel;
   let relevantName;
+
   switch (modelName) {
     case "Country":
       relavantModel = Country;
@@ -98,7 +93,9 @@ app.get("/question", async (req, res) => {
     case "QualityOfLifeIndex":
       relavantModel = QualityOfLifeIndex;
       relevantName = "country";
-      break;}
+      break;
+  }
+
   if (type === 1) {
     optionsData = await Country.findAll({
       order: Sequelize.literal("rand()"),
@@ -109,36 +106,34 @@ app.get("/question", async (req, res) => {
       console.log(data.toJSON().name);
       return data.toJSON().name;
     });
-    console.log(names)
-
-
-        const rowsFromRelevantTable = await relavantModel.findAll({
-      where: {[relevantName]:names},
-      attributes: [columnName]
+    const rowsFromRelevantTable = await relavantModel.findAll({
+      where: { [relevantName]: names },
+      attributes: [columnName],
     });
-    console.log(rowsFromRelevantTable[0].toJSON()[columnName])
-    const answer=(rowsFromRelevantTable[0].toJSON()[columnName]
-    )
-    const is_first=(questionData.toJSON()["is_first"])
+    const answer = rowsFromRelevantTable[0].toJSON()[columnName];
+    const is_first = questionData.toJSON()["is_first"];
     let other3Options;
-    if(is_first){
+    if (is_first) {
       other3Options = await relavantModel.findAll({
-        where: {[columnName]:{[Op.gt]: answer}},
-        limit:3
+        where: { [columnName]: { [Op.gt]: answer } },
+        limit: 3,
       });
-    }else{
-       other3Options = await relavantModel.findAll({
-        where: {[columnName]:{[Op.lt]: answer}},
-        limit:3
+    } else {
+      other3Options = await relavantModel.findAll({
+        where: { [columnName]: { [Op.lt]: answer } },
+        limit: 3,
       });
     }
     const name = other3Options.map((data) => {
       console.log(data.toJSON()[relevantName]);
       return data.toJSON()[relevantName];
     });
-    console.log(name[0])
-     allTheOption={answer:{answerNumber:answer,answerName:names},option1:{option1Name:name[0]},option2:{option2Name:name[1]},option3:{option3Name:name[2]}}
-    console.log(allTheOption)
+    allTheOption = {
+      answer: { answerNumber: answer, answerName: names },
+      option1: { option1Name: name[0] },
+      option2: { option2Name: name[1] },
+      option3: { option3Name: name[2] },
+    };
   } else if (type === 3 || type === 4) {
     let template = questionData.template;
     optionsData = await Country.findAll({
@@ -151,33 +146,35 @@ app.get("/question", async (req, res) => {
       return data.toJSON().name;
     });
     const rowsFromRelevantTable = await relavantModel.findAll({
-      where: {[Op.or]:[{[relevantName]:names[0]},{[relevantName]:names[1]}]},
-      attributes: [columnName]
+      where: {
+        [Op.or]: [{ [relevantName]: names[0] }, { [relevantName]: names[1] }],
+      },
+      attributes: [columnName],
     });
 
-    console.log(rowsFromRelevantTable)
-    const answer1=(rowsFromRelevantTable[0].toJSON()[columnName])
-    const answer2=(rowsFromRelevantTable[1].toJSON()[columnName])
-    const is_first=(questionData.toJSON()["is_first"])
+    const answer1 = rowsFromRelevantTable[0].toJSON()[columnName];
+    const answer2 = rowsFromRelevantTable[1].toJSON()[columnName];
+    const is_first = questionData.toJSON()["is_first"];
     optionsData = [true, false];
     let answer;
 
-    const answers = 
-      {answer1:answer1,answer1Country:names[0]
-    ,answer2:answer2,answer2Country:names[1]}
-   
-    if(is_first){
-      console.log("nihnas la true")
-       answer = answers.answer1<answers.answer2
-    }else{
-      console.log(" looooo nihnas la true")
-       answer = answers.answer1>answers.answer2
+    const answers = {
+      answer1: answer1,
+      answer1Country: names[0],
+      answer2: answer2,
+      answer2Country: names[1],
+    };
+
+    if (is_first) {
+      answer = answers.answer1 < answers.answer2;
+    } else {
+      answer = answers.answer1 > answers.answer2;
     }
-    answers.answer=answer
-     allTheOption = answers
-    console.log(answers.answer)
-    console.log(answers)
-    questionData.template = template.replace("X", names[0]).replace("Y", names[1]);
+    answers.answer = answer;
+    allTheOption = answers;
+    questionData.template = template
+      .replace("X", names[0])
+      .replace("Y", names[1]);
   } else {
     let template = questionData.template;
     const qustionX = await Country.findOne({
@@ -186,26 +183,29 @@ app.get("/question", async (req, res) => {
     });
     let tmp = qustionX.name;
     questionData.template = template.replace("X", tmp);
+
     const rowsFromRelevantTable = await relavantModel.findAll({
-      where: {[relevantName]:tmp},
-      attributes: [columnName]
+      where: { [relevantName]: tmp },
+      attributes: [columnName],
     });
-    const answer=(rowsFromRelevantTable[0].toJSON()[columnName])
-    
-    
+    const answer = rowsFromRelevantTable[0].toJSON()[columnName];
+
     let other3Options;
-      other3Options = await relavantModel.findAll({
-        order: Sequelize.literal("rand()"),
-        limit:3
-      });
-    const option1=(other3Options[0].toJSON()[columnName])
-    const option2=(other3Options[1].toJSON()[columnName])
-    const option3=(other3Options[2].toJSON()[columnName])
-    console.log(other3Options[0])
-     allTheOption={answer:{answer},option1:{option1},option2:{option2},option3:{option3}}
-    console.log(allTheOption)
-    allTheOption.answer = answer 
-    console.log(allTheOption)
+    other3Options = await relavantModel.findAll({
+      order: Sequelize.literal("rand()"),
+      limit: 3,
+    });
+    const option1 = other3Options[0].toJSON()[columnName];
+    const option2 = other3Options[1].toJSON()[columnName];
+    const option3 = other3Options[2].toJSON()[columnName];
+
+    allTheOption = {
+      answer: { answer },
+      option1: { option1 },
+      option2: { option2 },
+      option3: { option3 },
+    };
+    allTheOption.answer = answer;
   }
 
   const triviaQuestion = { question: questionData, options: allTheOption };
