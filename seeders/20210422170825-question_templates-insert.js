@@ -309,26 +309,6 @@ module.exports = {
           created_at: new Date(),
           updated_at: new Date(),
         },
-        {
-          template: "Does X have a morality rate of higher than Z%",
-          type: 4,
-          is_first: false,
-          table_name: "countries",
-          model_name: "Country",
-          column_name: "deathrate",
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
-        {
-          template: "Does X have a morality rate of lower than Z%",
-          type: 4,
-          is_first: true,
-          table_name: "countries",
-          model_name: "Country",
-          column_name: "deathrate",
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
       ].map((template, i) => ({ id: i + 1, ...template })),
       {}
     );
