@@ -62,10 +62,12 @@ app.get("/", (req, res) => {
 app.get("/question", async (req, res) => {
   let questionData = await QuestionTemplate.findOne({
     order: Sequelize.literal("rand()"),
-    where: { [Op.and]: [{ type: 2 }, { is_first: 1 }] },
+    where: { [Op.and]: [{ type: 2 }] },
     // attributes: ["template", "table_name", "model_name", "column_name", "type"],
   });
+  console.log(questionData)
   let modelName = questionData.model_name;
+  console.log(modelName)
   let columnName = questionData.column_name;
   let type = questionData.type;
   let optionsData = "";
@@ -184,16 +186,26 @@ app.get("/question", async (req, res) => {
     });
     let tmp = qustionX.name;
     questionData.template = template.replace("X", tmp);
-
-    for (model of models) {
-      if (model.name === modelName) {
-        optionsData = await model.findAll({
-          order: Sequelize.literal("rand()"),
-          attributes: [columnName],
-          limit: 3,
-        });
-      }
-    }
+    const rowsFromRelevantTable = await relavantModel.findAll({
+      where: {[relevantName]:tmp},
+      attributes: [columnName]
+    });
+    const answer=(rowsFromRelevantTable[0].toJSON()[columnName])
+    
+    
+    let other3Options;
+      other3Options = await relavantModel.findAll({
+        order: Sequelize.literal("rand()"),
+        limit:3
+      });
+    const option1=(other3Options[0].toJSON()[columnName])
+    const option2=(other3Options[1].toJSON()[columnName])
+    const option3=(other3Options[2].toJSON()[columnName])
+    console.log(other3Options[0])
+     allTheOption={answer:{answer},option1:{option1},option2:{option2},option3:{option3}}
+    console.log(allTheOption)
+    allTheOption.answer = answer 
+    console.log(allTheOption)
   }
 
   const triviaQuestion = { question: questionData, options: allTheOption };
