@@ -217,7 +217,7 @@ app.get("/question", async (req, res) => {
         allTheOption.answer = answer;
       }
 
-      const triviaQuestion = { question: questionData, options: allTheOption };
+      const triviaQuestion = [{ question: questionData, options: allTheOption }];
       res.json(triviaQuestion);
       return true;
     } catch (err) {
