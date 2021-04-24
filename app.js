@@ -242,4 +242,14 @@ app.get("/question", async (req, res) => {
   }
 });
 
+app.post("/leaderBoard", async (req, res) => {
+  const playerRecord = await Player.create({
+    name: req.body.name,
+    score: req.body.score,
+    created_at: Date.now(),
+    updated_at: Date.now(),
+  });
+  console.log(playerRecord);
+});
+
 module.exports = app;
