@@ -57,6 +57,14 @@ app.get("/", (req, res) => {
     .catch((err) => console.log(err));
 });
 
+app.get("/leaderBoard", (req, res) => {
+  Player.findAll({})
+    .then(async (player) => {
+      res.send(player);
+    })
+    .catch((err) => console.log(err));
+});
+
 app.get("/question", async (req, res) => {
   async function randomQuestion() {
     console.log("startttttttttttttttttttttttttttttttttttttttttttttt");
