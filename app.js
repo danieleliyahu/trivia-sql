@@ -63,7 +63,7 @@ app.get("/question", async (req, res) => {
     try {
       let questionData = await QuestionTemplate.findOne({
         order: Sequelize.literal("rand()"),
-        //   where: { [Op.and]: [{ type: 1 }] },
+        // where: { [Op.and]: [{ type: 3 }] },
         // attributes: ["template", "table_name", "model_name", "column_name", "type"],
       });
       const modelName = questionData.model_name;
@@ -135,10 +135,11 @@ app.get("/question", async (req, res) => {
           return data.toJSON()[relevantName];
         });
         allTheOption = {
-          answer: { answerNumber: answer, answerName: names },
-          option1: { option1Name: name[0] },
-          option2: { option2Name: name[1] },
-          option3: { option3Name: name[2] },
+          answer: names[0],
+          // answer: { answerNumber: answer, answerName: names },
+          option1: name[0],
+          option2: name[1],
+          option3: name[2],
         };
       } else if (type === 3) {
         let template = questionData.template;
@@ -164,7 +165,6 @@ app.get("/question", async (req, res) => {
         const answer1 = rowsFromRelevantTable[0].toJSON()[columnName];
         const answer2 = rowsFromRelevantTable[1].toJSON()[columnName];
         const is_first = questionData.toJSON()["is_first"];
-        optionsData = [true, false];
         let answer;
 
         const answers = {
@@ -179,8 +179,14 @@ app.get("/question", async (req, res) => {
         } else {
           answer = answers.answer1 > answers.answer2;
         }
+        optionsData = {
+          option1: "true",
+          option2: "false",
+          answer: answer,
+        };
+
         answers.answer = answer;
-        allTheOption = answers;
+        allTheOption = optionsData;
         questionData.template = template
           .replace("X", names[0])
           .replace("Y", names[1]);
@@ -209,15 +215,17 @@ app.get("/question", async (req, res) => {
         const option3 = other3Options[2].toJSON()[columnName];
 
         allTheOption = {
-          answer: { answer },
-          option1: { option1 },
-          option2: { option2 },
-          option3: { option3 },
+          answer: answer,
+          option1: option1,
+          option2: option2,
+          option3: option3,
         };
         allTheOption.answer = answer;
       }
 
-      const triviaQuestion = [{ question: questionData, options: allTheOption }];
+      const triviaQuestion = [
+        { question: questionData, options: allTheOption },
+      ];
       res.json(triviaQuestion);
       return true;
     } catch (err) {
