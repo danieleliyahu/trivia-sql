@@ -2,6 +2,7 @@ import "./App.css";
 import axios from "axios";
 import Question from "./components/Question";
 import { useEffect,useRef, useState } from "react";
+import {BrowserRouter as Router, Switch ,Route} from 'react-router-dom';
 
 function App() {
   const [answer, setanswer] = useState(null)
@@ -75,7 +76,16 @@ function App() {
   }, [count]);
   return (
     <div>
-      <Question question={question} />
+          <Router>
+        <Switch>
+        {/* <Route exact path="/" component={Question} question={question}/> */}
+        <Route 
+    path="/" 
+    render={(props) => <Question {...props} question={question}/>} 
+/>
+        </Switch>
+      </Router>
+
     </div>
   );
 }
