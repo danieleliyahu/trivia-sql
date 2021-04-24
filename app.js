@@ -182,6 +182,7 @@ app.get("/question", async (req, res) => {
         optionsData = {
           option1: "true",
           option2: "false",
+          answer1: answer.toString(),
           answer: answer,
         };
 
