@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const morgan = require("morgan");
 const Sequelize = require("sequelize");
 const sequelize = require("sequelize");
@@ -28,6 +29,7 @@ morgan.token("reqbody", (req) => {
   return JSON.stringify(newObject);
 });
 
+app.use(cors());
 app.use(express.json());
 app.use(
   morgan(
