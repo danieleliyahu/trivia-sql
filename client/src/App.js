@@ -69,7 +69,7 @@ function App() {
     getQuestion();
     console.log("the answer spouse to be ",answer)
     console.log("your click on",clientAnswer)
-    if(clientAnswer===answer){
+    if(clientAnswer==answer){
       console.log("great")
     }else{console.log("wrong answer")}
   }, [count]);

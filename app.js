@@ -63,7 +63,7 @@ app.get("/question", async (req, res) => {
     try {
       let questionData = await QuestionTemplate.findOne({
         order: Sequelize.literal("rand()"),
-        // where: { [Op.and]: [{ type: 3 }] },
+        where: { [Op.and]: [{ type: 2 }] },
         // attributes: ["template", "table_name", "model_name", "column_name", "type"],
       });
       const modelName = questionData.model_name;
