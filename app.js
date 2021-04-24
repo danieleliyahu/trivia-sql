@@ -4,7 +4,7 @@ const morgan = require("morgan");
 const Sequelize = require("sequelize");
 const sequelize = require("sequelize");
 const { Op } = require("sequelize");
-
+const { or } = require("sequelize");
 // const { snakeToPascal } = require("./utils");
 
 morgan.token("reqbody", (req) => {
@@ -37,7 +37,7 @@ const {
   Player,
   QuestionTemplate,
 } = require("./models");
-const { or } = require("sequelize");
+
 
 const models = [
   Country,
@@ -62,7 +62,7 @@ app.get("/", (req, res) => {
 app.get("/question", async (req, res) => {
   let questionData = await QuestionTemplate.findOne({
     order: Sequelize.literal("rand()"),
-    where: { [Op.and]: [{ type: 3 }, { is_first: 0 }] },
+    where: { [Op.and]: [{ type: 2 }, { is_first: 1 }] },
     // attributes: ["template", "table_name", "model_name", "column_name", "type"],
   });
   let modelName = questionData.model_name;
@@ -70,6 +70,8 @@ app.get("/question", async (req, res) => {
   let type = questionData.type;
   let optionsData = "";
   let allTheOption;
+  let relavantModel;
+  let relevantName;
   switch (modelName) {
     case "Country":
       relavantModel = Country;
@@ -106,8 +108,7 @@ app.get("/question", async (req, res) => {
       return data.toJSON().name;
     });
     console.log(names)
-    let relavantModel;
-    let relevantName;
+
 
         const rowsFromRelevantTable = await relavantModel.findAll({
       where: {[relevantName]:names},
@@ -117,18 +118,15 @@ app.get("/question", async (req, res) => {
     const answer=(rowsFromRelevantTable[0].toJSON()[columnName]
     )
     const is_first=(questionData.toJSON()["is_first"])
-    // console.log(questionData.toJSON()["is_first"])
     let other3Options;
     if(is_first){
       other3Options = await relavantModel.findAll({
         where: {[columnName]:{[Op.gt]: answer}},
-        // attributes: [columnName]
         limit:3
       });
     }else{
        other3Options = await relavantModel.findAll({
         where: {[columnName]:{[Op.lt]: answer}},
-        // attributes: [columnName]
         limit:3
       });
     }
@@ -139,26 +137,6 @@ app.get("/question", async (req, res) => {
     console.log(name[0])
      allTheOption={answer:{answerNumber:answer,answerName:names},option1:{option1Name:name[0]},option2:{option2Name:name[1]},option3:{option3Name:name[2]}}
     console.log(allTheOption)
-    // const rowsFromRelevantTable = await relavantModel.findAll({
-    //   where: {
-    //     [Op.or]: [
-    //       {
-    //         [relevantName]: names[0],
-    //       },
-    //       {
-    //         [relevantName]: names[1],
-    //       },
-    //       {
-    //         [relevantName]: names[2],
-    //       },
-    //       {
-    //         [relevantName]: names[3],
-    //       },
-    //     ],
-    //   },
-    // });
-
-    // rowsFromRelevantTable.map((data) => console.log(data.toJSON()));
   } else if (type === 3 || type === 4) {
     let template = questionData.template;
     optionsData = await Country.findAll({
@@ -177,12 +155,8 @@ app.get("/question", async (req, res) => {
 
     console.log(rowsFromRelevantTable)
     const answer1=(rowsFromRelevantTable[0].toJSON()[columnName])
-    // console.log(answer1)
     const answer2=(rowsFromRelevantTable[1].toJSON()[columnName])
-    // console.log(answer2)
     const is_first=(questionData.toJSON()["is_first"])
-    // console.log(is_first,"gggggggggggg")
-    // console.log(answer1,answer2)
     optionsData = [true, false];
     let answer;
 
@@ -198,11 +172,10 @@ app.get("/question", async (req, res) => {
        answer = answers.answer1>answers.answer2
     }
     answers.answer=answer
+     allTheOption = answers
     console.log(answers.answer)
     console.log(answers)
     questionData.template = template.replace("X", names[0]).replace("Y", names[1]);
-    // questionData.template = ;
-    // console.log(template)
   } else {
     let template = questionData.template;
     const qustionX = await Country.findOne({
@@ -216,13 +189,6 @@ app.get("/question", async (req, res) => {
       if (model.name === modelName) {
         optionsData = await model.findAll({
           order: Sequelize.literal("rand()"),
-          // where: {
-          //   [Op.or]: [
-          //     { country: tmp },
-          //     { name: tmp },
-          //     { country_or_dependent_territory: tmp },
-          //   ],
-          // },
           attributes: [columnName],
           limit: 3,
         });
