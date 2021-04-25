@@ -27,9 +27,7 @@ function App() {
     setcount(count + 1);
     let clientAnswer1 = e.target.innerText;
     setclientAnswer(clientAnswer1);
-    if (strike !== 1) {
-      ratePopupWindow();
-    }
+
 
     console.log("RATEEE");
   };
@@ -125,6 +123,13 @@ function App() {
 
   useEffect(() => {
     getQuestion();
+    if (strike !== 2) {
+
+      ratePopupWindow();
+      if (count >= 1) {
+        popupvaild.current.className = "popup active";
+      }
+    }
     if (clientAnswer == answer) {
       if (count >= 1) {
         setScore(score + 100);
@@ -132,7 +137,7 @@ function App() {
     } else {
       setStrike(strike + 1);
       console.log(strike);
-      if ((strike === 3) & (count >= 1)) {
+      if ((strike === 2) & (count >= 1)) {
         console.log(strike);
         gameOver(input, score, strike, popupWindow, getLeaderBoard);
       }
@@ -144,14 +149,12 @@ function App() {
   };
 
   const ratePopupWindow = () => {
-    if (count >= 1) {
-      popupvaild.current.className = "popup active";
-    }
+
     console.log("popup function");
     return setPopupRateState(
-      <div className="popup active" ref={popupvaild} id="popup-1">
+      <div className="popup " ref={popupvaild} id="popup-1">
         <div className="overlay "></div>
-        <div ref={popupvaild} className="contentPopup active">
+        <div ref={popupvaild} className="contentPopup ">
           <div class="close-btn" onClick={togglePopup}></div>
           <h1>PLEASE RATE THE QUESTION👍</h1>
           <div>⭐</div>
