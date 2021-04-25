@@ -2,14 +2,16 @@ import "./App.css";
 import axios from "axios";
 import Question from "./components/Question";
 import Login from "./components/Login";
-import { shuffleArray, gameOver, saveGameResult } from "./utils";
+
+import { shuffleArray, gameOver } from "./utils";
 import { useEffect, useRef, useState } from "react";
-import { BrowserRouter as Router, Link,Switch, Route } from "react-router-dom";
-// import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
 
 function App() {
   const [answer, setanswer] = useState(null);
   const [state, setstate] = useState(null);
+  const [popupRateState, setPopupRateState] = useState(null);
+
   const [question, setQuestion] = useState([]);
   const [clientAnswer, setclientAnswer] = useState(null);
   const [count, setcount] = useState(0);
@@ -17,54 +19,57 @@ function App() {
   const [strike, setStrike] = useState(0);
   const [input, setInput] = useState();
   const [leaderBoardTable, setLeaderBoardTable] = useState();
-const qoustion = useRef()
-const newgame = useRef()
-const popupvaild = useRef()
+  const questionContainer = useRef();
+  const newgame = useRef();
+  const popupvaild = useRef();
+
   const onButtonClick = (e) => {
     setcount(count + 1);
     let clientAnswer1 = e.target.innerText;
     setclientAnswer(clientAnswer1);
+    if (strike !== 1) {
+      ratePopupWindow();
+    }
+
+    console.log("RATEEE");
   };
 
   const getPlayerName = (e) => {
     setInput(e.target.value);
   };
 
-
   const getLeaderBoard = () =>
-
-    axios.get(`/leaderBoard`)
+    axios
+      .get(`/leaderBoard`)
       .then(({ data }) => {
         setLeaderBoardTable(
-        <table> 
-           <tr>
-               <th >RANK</th>
-               <th >NAME</th>
-               <th >SCORE</th>
-           </tr>
-           {data.map((row,i)=>{
-              return(
-                <tr >
-                    <td >{row.id}</td>
-                    <td >{row.name}</td>
-                    <td >{row.score}</td>
+          <table>
+            <tr>
+              <th>RANK</th>
+              <th>NAME</th>
+              <th>SCORE</th>
+            </tr>
+            {data.map((row, i) => {
+              return (
+                <tr>
+                  <td>{i + 1}</td>
+                  <td>{row.name}</td>
+                  <td>{row.score}</td>
                 </tr>
-              )
-           })}
-       </table> )
-       console.log(leaderBoardTable)
+              );
+            })}
+          </table>
+        );
+        console.log(leaderBoardTable);
       })
-      .catch(error => {
-        console.log(error)
-        if (error.message === "Request failed with status code 404"
-        ) {
-          return
+      .catch((error) => {
+        console.log(error);
+        if (error.message === "Request failed with status code 404") {
+          return;
         }
+      });
 
-      })
-
-  
-  console.log(leaderBoardTable)
+  console.log(leaderBoardTable);
 
   const getQuestion = () =>
     axios
@@ -115,46 +120,72 @@ const popupvaild = useRef()
 
   useEffect(() => {
     getQuestion();
-    getLeaderBoard()
-    
-
+    getLeaderBoard();
   }, []);
 
   useEffect(() => {
     getQuestion();
-    console.log("the answer suposed to be ", answer);
-    console.log("you clicked on", clientAnswer);
     if (clientAnswer == answer) {
-      console.log("great");
       if (count >= 1) {
         setScore(score + 100);
       }
     } else {
-      console.log("wrong answer");
       setStrike(strike + 1);
       console.log(strike);
-      if ((strike === 1) & (count >= 1)) {
-        console.log("game over");
-        gameOver(input, score,popupWindow,getLeaderBoard);
+      if ((strike === 3) & (count >= 1)) {
+        console.log(strike);
+        gameOver(input, score, strike, popupWindow, getLeaderBoard);
       }
     }
   }, [count]);
+
   const togglePopup = () => {
-    console.log(popupvaild.current.className="popup")
- }
-  const popupWindow = () =>{
-       return  setstate(<div className="popup active" ref={popupvaild} id="popup-1">
-           <div className="overlay "></div>
-           <div ref={popupvaild} className="contentPopup active" >
-           <div class="close-btn" onClick={togglePopup} ><Link to="/">start</Link>;</div>
-           <h1>GAME OVER😢</h1>
-               <div>{input}</div>
-               <div>{score}</div>
-               {/* <div></div> */}
-           <div className="closeVaildButton"><i className="fas fa-check-circle"></i></div>
-           </div>
-       </div>)
-  }
+    popupvaild.current.className = "popup";
+  };
+
+  const ratePopupWindow = () => {
+    if (count >= 1) {
+      popupvaild.current.className = "popup active";
+    }
+    console.log("popup function");
+    return setPopupRateState(
+      <div className="popup active" ref={popupvaild} id="popup-1">
+        <div className="overlay "></div>
+        <div ref={popupvaild} className="contentPopup active">
+          <div class="close-btn" onClick={togglePopup}></div>
+          <h1>PLEASE RATE THE QUESTION👍</h1>
+          <div>⭐</div>
+          <div>⭐⭐</div>
+          <div>⭐⭐⭐</div>
+          <div>⭐⭐⭐⭐</div>
+          <div>⭐⭐⭐⭐⭐</div>
+          <div className="closeVaildButton">
+            <i className="fas fa-check-circle"></i>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const popupWindow = () => {
+    return setstate(
+      <div className="popup active" ref={popupvaild} id="popup-1">
+        <div className="overlay "></div>
+        <div ref={popupvaild} className="contentPopup active">
+          <div class="close-btn" onClick={togglePopup}>
+            <Link to="/">start</Link>;
+          </div>
+          <h1>GAME OVER😢</h1>
+          <div>{input}</div>
+          <div>{score}</div>
+          <div className="closeVaildButton">
+            <i className="fas fa-check-circle"></i>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div>
       <Router>
@@ -169,9 +200,10 @@ const popupvaild = useRef()
                 input={input}
                 score={score}
                 strike={strike}
-                qoustion={qoustion}
+                questionContainer={questionContainer}
                 newgame={newgame}
                 state={state}
+                popupRateState={popupRateState}
               />
             )}
           />
@@ -184,7 +216,6 @@ const popupvaild = useRef()
                 getPlayerName={getPlayerName}
                 input={input}
                 leaderBoardTable={leaderBoardTable}
-
               />
             )}
           />

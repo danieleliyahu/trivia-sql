@@ -21,11 +21,11 @@ const saveGameResult = async (input, score) => {
   });
 };
 
-const gameOver = (input, score,popupWindow,getLeaderBoard) => {
-  alert(`GAME OVER ${input}. YOUR SCORE IS ${score}. YOUR RANK IS 1 `);
+const gameOver = (input, score, strike, popupWindow, getLeaderBoard) => {
+  // alert(`GAME OVER ${input}. YOUR SCORE IS ${score}. YOUR RANK IS 1 `);
   saveGameResult(input, score);
-  popupWindow()
-  getLeaderBoard()
+  popupWindow();
+  getLeaderBoard();
 };
 
 module.exports = { shuffleArray, gameOver };
