@@ -2,7 +2,7 @@
 // import { useState } from "react";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 
-const Login = ({ getPlayerName, input, leaderBoard }) => {
+const Login = ({ getPlayerName, input, leaderBoardTable }) => {
   return (
     <>
       <div>
@@ -16,7 +16,7 @@ const Login = ({ getPlayerName, input, leaderBoard }) => {
         />
         <Link to="/game">start</Link>
       </div>
-      {/* {leaderBoard} */}
+      {leaderBoardTable}
     </>
   );
 };

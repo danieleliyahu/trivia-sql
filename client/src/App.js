@@ -14,9 +14,10 @@ function App() {
   const [score, setScore] = useState(0);
   const [strike, setStrike] = useState(0);
   const [input, setInput] = useState();
-  // const [leaderBoardTable, setLeaderBoardTable] = useState();
+  const [leaderBoardTable, setLeaderBoardTable] = useState();
 
   const onButtonClick = (e) => {
+    // getPokemonData()
     setcount(count + 1);
     let clientAnswer1 = e.target.innerText;
     setclientAnswer(clientAnswer1);
@@ -46,15 +47,52 @@ function App() {
   // };
 
   // useEffect(() => {
-  //   axios
+  //   let playerRow = axios
   //     .get(`/leaderBoard`)
   //     .then(({ data }) => {
-  //       console.log(data);
+  //       return data
   //     })
   //     .catch((error) => {
   //       console.log("There was an error", error);
   //     });
+  //     // playerRow.then((x)=>{setLeaderBoardTable(x)})
+  //     console.log(leaderBoardTable)
+      
   // }, []);
+  const getLeaderBoard = () =>
+
+    axios.get(`/leaderBoard`)
+      .then(({ data }) => {
+        setLeaderBoardTable(
+        <table> 
+           <tr>
+               <th >RANK</th>
+               <th >NAME</th>
+               <th >SCORE</th>
+           </tr>
+           {data.map((row,i)=>{
+              return(
+                <tr >
+                    <td >{row.id}</td>
+                    <td >{row.name}</td>
+                    <td >{row.score}</td>
+                </tr>
+              )
+           })}
+       </table> )
+       console.log(leaderBoardTable)
+      })
+      .catch(error => {
+        console.log(error)
+        if (error.message === "Request failed with status code 404"
+        ) {
+          return
+        }
+
+      })
+
+  
+  console.log(leaderBoardTable)
 
   const getQuestion = () =>
     axios
@@ -105,6 +143,9 @@ function App() {
 
   useEffect(() => {
     getQuestion();
+    getLeaderBoard()
+    
+
   }, []);
 
   useEffect(() => {
@@ -152,7 +193,7 @@ function App() {
                 {...props}
                 getPlayerName={getPlayerName}
                 input={input}
-                // leaderBoard={leaderBoard}
+                leaderBoardTable={leaderBoardTable}
               />
             )}
           />
