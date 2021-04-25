@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
 const Sequelize = require("sequelize");
+const sequelize = require("sequelize");
 const { Op } = require("sequelize");
 const {
   Country,
@@ -13,7 +14,7 @@ const {
   QualityOfLifeIndex,
   Player,
   QuestionTemplate,
-  SavedQuestion
+  SavedQuestion,
 } = require("./models");
 
 morgan.token("reqbody", (req) => {
@@ -258,6 +259,14 @@ app.post("/leaderBoard", async (req, res) => {
   });
   console.log(playerRecord);
 });
+
+app.get("/savedQuestion", async (req, res) => {
+  const savedQuestion = await SavedQuestion.findOne({
+    order: Sequelize.literal("rand()"),
+  });
+  res.json([savedQuestion]);
+});
+
 app.post("/questionRating", async (req, res) => {
   const questionRating = await SavedQuestion.create({
     type: req.body.type,
@@ -274,6 +283,22 @@ app.post("/questionRating", async (req, res) => {
     updated_at: Date.now(),
   });
   console.log(questionRating);
+});
+
+app.patch("/questionRating/:id", async (req, res) => {
+  const { id } = req.params;
+  const x = await SavedQuestion.update(
+    { number_of_ratings: sequelize.literal("number_of_ratings + 1") },
+    { where: { id: id } }
+  );
+
+  // Ticket.findOne({ _id: ticketId })
+  //   .then((result) => {
+  //     result.updateOne({ done: true }).then((_) => {
+  //       res.status(200).json({ updated: true });
+  //     });
+  //   })
+  // .catch((err) => res.status(500).json({ error: err.message }));
 });
 
 module.exports = app;
