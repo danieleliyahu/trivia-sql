@@ -4,6 +4,8 @@ module.exports = {
 		await queryInterface.createTable("saved_questions", {
 			id: {
 				allowNull: false,
+				primaryKey: true,
+				autoIncrement: true,
 				type: Sequelize.INTEGER,
 			},
 			type: {
@@ -31,7 +33,7 @@ module.exports = {
 				type: Sequelize.STRING,
 			},
 			answer: {
-				type: Sequelize.INTEGER,
+				type: Sequelize.STRING,
 			},
 			rating: {
 				allowNull: false,

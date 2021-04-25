@@ -30,9 +30,6 @@ function App() {
     setcount(count + 1);
     let clientAnswer1 = e.target.innerText;
     setclientAnswer(clientAnswer1);
-
-
-    console.log("RATEEE");
   };
 
   const getPlayerName = (e) => {
@@ -69,9 +66,6 @@ function App() {
           return;
         }
       });
-
-  console.log(leaderBoardTable);
-
   const getQuestion = () =>
     axios
       .get(`/question`)
@@ -152,47 +146,30 @@ function App() {
   const togglePopup = () => {
     popupvaild.current.className = "popup";
   };
-  const postRankFunc = ()=>{
-    axios({
-      method: 'post',
-      url: "/leaderBoard",
-      data: {
-          type: QuestionInfo.question.type,
-          question_str: QuestionInfo.question.template,
-          option1: QuestionInfo.question.option1,
-          option2: QuestionInfo.question.option1,
-          option3: QuestionInfo.question.option1,
-          answer: QuestionInfo.question.answer,
-          answer1: QuestionInfo.question.answer1,
-          rating: rankstate 
-      }
-    });
-    
-    console.log(rankstate)
+  const postQuestionRating = ()=>{
+      axios({
+        method: 'post',
+        url: "/questionRating",
+        data: {
+            type: QuestionInfo.question.type,
+            question_str: QuestionInfo.question.template,
+            template: QuestionInfo.question.template,
+            option1: QuestionInfo.options.option1,
+            option2: QuestionInfo.options.option2,
+            option3: QuestionInfo.options.option3,
+            answer: QuestionInfo.options.answer,
+            rating: rankstate,
+            number_of_ratings: 0
+        }
+      });
+
   }
-  
+  const onClickRank = (number)=>{
+    rankstate=number
+    postQuestionRating()
+    togglePopup()
+  }
   const ratePopupWindow = () => {
-    const onClickRank1 = ()=>{
-      rankstate=1
-      postRankFunc()
-    }
-    const onClickRank2 = ()=>{
-      rankstate=2
-      postRankFunc()
-          }
-    const onClickRank3 = ()=>{
-      rankstate=3
-      postRankFunc()
-          }
-    const onClickRank4 = ()=>{ 
-      rankstate=4
-      postRankFunc()
-          }
-    const onClickRank5 = ()=>{
-      rankstate=5
-      postRankFunc()
-          }
-    console.log("popup function");
     return setPopupRateState(
       <div className="popup " ref={popupvaild} id="popup-1">
         <div className="overlay "></div>
@@ -200,11 +177,11 @@ function App() {
           <div class="close-btn" onClick={togglePopup}></div>
           <h1>PLEASE RATE THE QUESTION👍</h1>
           <div>
-          <div   onClick={(e) => onClickRank1()} >⭐</div>
-          <div   onClick={(e) => onClickRank2()} >⭐⭐</div>
-          <div   onClick={(e) => onClickRank3()} >⭐⭐⭐</div>
-          <div   onClick={(e) => onClickRank4()} >⭐⭐⭐⭐</div>
-          <div   onClick={(e) => onClickRank5()} >⭐⭐⭐⭐⭐</div>
+          <div   onClick={(e) => onClickRank(1)} >⭐</div>
+          <div   onClick={(e) => onClickRank(2)} >⭐⭐</div>
+          <div   onClick={(e) => onClickRank(3)} >⭐⭐⭐</div>
+          <div   onClick={(e) => onClickRank(4)} >⭐⭐⭐⭐</div>
+          <div   onClick={(e) => onClickRank(5)} >⭐⭐⭐⭐⭐</div>
          </div>
           <div className="closeVaildButton">
             <i className="fas fa-check-circle"></i>

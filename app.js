@@ -3,9 +3,7 @@ const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
 const Sequelize = require("sequelize");
-const sequelize = require("sequelize");
 const { Op } = require("sequelize");
-const { or } = require("sequelize");
 const {
   Country,
   CrimeIndex,
@@ -15,6 +13,7 @@ const {
   QualityOfLifeIndex,
   Player,
   QuestionTemplate,
+  SavedQuestion
 } = require("./models");
 
 morgan.token("reqbody", (req) => {
@@ -70,7 +69,6 @@ app.get("/leaderBoard", (req, res) => {
 
 app.get("/question", async (req, res) => {
   async function randomQuestion() {
-    console.log("startttttttttttttttttttttttttttttttttttttttttttttt");
     try {
       let questionData = await QuestionTemplate.findOne({
         order: Sequelize.literal("rand()"),
@@ -147,7 +145,6 @@ app.get("/question", async (req, res) => {
         });
         allTheOption = {
           answer: names[0],
-          // answer: { answerNumber: answer, answerName: names },
           option1: name[0],
           option2: name[1],
           option3: name[2],
@@ -241,9 +238,8 @@ app.get("/question", async (req, res) => {
       res.json(triviaQuestion);
       return true;
     } catch (err) {
-      console.log("errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+      console.log(err);
       randomQuestion();
-      //   res.json({ err: err.message });
       return false;
     }
   }
@@ -262,15 +258,14 @@ app.post("/leaderBoard", async (req, res) => {
   });
   console.log(playerRecord);
 });
-
 app.post("/questionRating", async (req, res) => {
   const questionRating = await SavedQuestion.create({
     type: req.body.type,
-    question_str: req.body.question_str,
+    question_str: req.body.template,
     option1: req.body.option1,
     option2: req.body.option2,
     option3: req.body.option3,
-    option4: req.body.option4,
+    option4: null,
     answer: req.body.answer,
     rating: req.body.rating,
     number_of_ratings: req.body.number_of_ratings,
