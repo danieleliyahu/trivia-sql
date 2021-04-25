@@ -18,10 +18,13 @@ function App() {
   const [score, setScore] = useState(0);
   const [strike, setStrike] = useState(0);
   const [input, setInput] = useState();
+  const [QuestionInfo, setQuestionInfo] = useState();
+  let rankstate;
   const [leaderBoardTable, setLeaderBoardTable] = useState();
   const questionContainer = useRef();
   const newgame = useRef();
   const popupvaild = useRef();
+
 
   const onButtonClick = (e) => {
     setcount(count + 1);
@@ -76,8 +79,10 @@ function App() {
         if (data) {
           const fullQuestion = data.map((fullQuestion, i) => {
             if (undefined === fullQuestion.options.answer1) {
+              setQuestionInfo(fullQuestion)
               setanswer(fullQuestion.options.answer);
             } else {
+              setQuestionInfo(fullQuestion)
               setanswer(fullQuestion.options.answer1);
             }
             const options = [
@@ -93,16 +98,16 @@ function App() {
                   <h1 className={"question"}>
                     {fullQuestion.question.template}
                   </h1>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div   onClick={(e) => onButtonClick(e)} className={"options"}>
                     {shuffledOptions[0]}
                   </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div  onClick={(e) => onButtonClick(e)} className={"options"}>
                     {shuffledOptions[1]}
                   </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div   onClick={(e) => onButtonClick(e)} className={"options"}>
                     {shuffledOptions[2]}
                   </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div  onClick={(e) => onButtonClick(e)} className={"options"}>
                     {shuffledOptions[3]}
                   </div>
                 </div>
@@ -147,9 +152,46 @@ function App() {
   const togglePopup = () => {
     popupvaild.current.className = "popup";
   };
-
+  const postRankFunc = ()=>{
+    axios({
+      method: 'post',
+      url: "/leaderBoard",
+      data: {
+          type: QuestionInfo.question.type,
+          question_str: QuestionInfo.question.template,
+          option1: QuestionInfo.question.option1,
+          option2: QuestionInfo.question.option1,
+          option3: QuestionInfo.question.option1,
+          answer: QuestionInfo.question.answer,
+          answer1: QuestionInfo.question.answer1,
+          rating: rankstate 
+      }
+    });
+    
+    console.log(rankstate)
+  }
+  
   const ratePopupWindow = () => {
-
+    const onClickRank1 = ()=>{
+      rankstate=1
+      postRankFunc()
+    }
+    const onClickRank2 = ()=>{
+      rankstate=2
+      postRankFunc()
+          }
+    const onClickRank3 = ()=>{
+      rankstate=3
+      postRankFunc()
+          }
+    const onClickRank4 = ()=>{ 
+      rankstate=4
+      postRankFunc()
+          }
+    const onClickRank5 = ()=>{
+      rankstate=5
+      postRankFunc()
+          }
     console.log("popup function");
     return setPopupRateState(
       <div className="popup " ref={popupvaild} id="popup-1">
@@ -157,11 +199,13 @@ function App() {
         <div ref={popupvaild} className="contentPopup ">
           <div class="close-btn" onClick={togglePopup}></div>
           <h1>PLEASE RATE THE QUESTION👍</h1>
-          <div>⭐</div>
-          <div>⭐⭐</div>
-          <div>⭐⭐⭐</div>
-          <div>⭐⭐⭐⭐</div>
-          <div>⭐⭐⭐⭐⭐</div>
+          <div>
+          <div   onClick={(e) => onClickRank1()} >⭐</div>
+          <div   onClick={(e) => onClickRank2()} >⭐⭐</div>
+          <div   onClick={(e) => onClickRank3()} >⭐⭐⭐</div>
+          <div   onClick={(e) => onClickRank4()} >⭐⭐⭐⭐</div>
+          <div   onClick={(e) => onClickRank5()} >⭐⭐⭐⭐⭐</div>
+         </div>
           <div className="closeVaildButton">
             <i className="fas fa-check-circle"></i>
           </div>
