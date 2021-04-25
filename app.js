@@ -74,7 +74,7 @@ app.get("/question", async (req, res) => {
     try {
       let questionData = await QuestionTemplate.findOne({
         order: Sequelize.literal("rand()"),
-        where: { [Op.and]: [{ type: 2 }] },
+        // where: { [Op.and]: [{ type: 2 }] },
         // attributes: ["template", "table_name", "model_name", "column_name", "type"],
       });
       const modelName = questionData.model_name;
@@ -261,6 +261,24 @@ app.post("/leaderBoard", async (req, res) => {
     updated_at: Date.now(),
   });
   console.log(playerRecord);
+});
+
+app.post("/questionRating", async (req, res) => {
+  const questionRating = await SavedQuestion.create({
+    type: req.body.type,
+    question_str: req.body.question_str,
+    option1: req.body.option1,
+    option2: req.body.option2,
+    option3: req.body.option3,
+    option4: req.body.option4,
+    answer: req.body.answer,
+    rating: req.body.rating,
+    number_of_ratings: req.body.number_of_ratings,
+    template: req.body.template,
+    created_at: Date.now(),
+    updated_at: Date.now(),
+  });
+  console.log(questionRating);
 });
 
 module.exports = app;
