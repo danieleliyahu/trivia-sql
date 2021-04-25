@@ -4,10 +4,12 @@ import Question from "./components/Question";
 import Login from "./components/Login";
 import { shuffleArray, gameOver, saveGameResult } from "./utils";
 import { useEffect, useRef, useState } from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Link,Switch, Route } from "react-router-dom";
+// import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 
 function App() {
   const [answer, setanswer] = useState(null);
+  const [state, setstate] = useState(null);
   const [question, setQuestion] = useState([]);
   const [clientAnswer, setclientAnswer] = useState(null);
   const [count, setcount] = useState(0);
@@ -15,9 +17,10 @@ function App() {
   const [strike, setStrike] = useState(0);
   const [input, setInput] = useState();
   const [leaderBoardTable, setLeaderBoardTable] = useState();
-
+const qoustion = useRef()
+const newgame = useRef()
+const popupvaild = useRef()
   const onButtonClick = (e) => {
-    // getPokemonData()
     setcount(count + 1);
     let clientAnswer1 = e.target.innerText;
     setclientAnswer(clientAnswer1);
@@ -27,38 +30,7 @@ function App() {
     setInput(e.target.value);
   };
 
-  // const leader = () => {
-  //   axios
-  //     .get(`/leaderBoard`)
-  //     .then(({ data }) => {
-  //       console.log(data);
-  //       // const rows = data.map((row, i) => {
-  //       //   return (
-  //       //     <div key={i}>
-  //       //       {row.id} {row.name} {row.score}
-  //       //     </div>
-  //       //   );
-  //       // });
-  //       // setclientsInfo(clients);
-  //     })
-  //     .catch((error) => {
-  //       console.log("There was an error", error);
-  //     });
-  // };
 
-  // useEffect(() => {
-  //   let playerRow = axios
-  //     .get(`/leaderBoard`)
-  //     .then(({ data }) => {
-  //       return data
-  //     })
-  //     .catch((error) => {
-  //       console.log("There was an error", error);
-  //     });
-  //     // playerRow.then((x)=>{setLeaderBoardTable(x)})
-  //     console.log(leaderBoardTable)
-      
-  // }, []);
   const getLeaderBoard = () =>
 
     axios.get(`/leaderBoard`)
@@ -163,11 +135,26 @@ function App() {
       console.log(strike);
       if ((strike === 1) & (count >= 1)) {
         console.log("game over");
-        gameOver(input, score);
+        gameOver(input, score,popupWindow,getLeaderBoard);
       }
     }
   }, [count]);
-
+  const togglePopup = () => {
+    console.log(popupvaild.current.className="popup")
+ }
+  const popupWindow = () =>{
+       return  setstate(<div className="popup active" ref={popupvaild} id="popup-1">
+           <div className="overlay "></div>
+           <div ref={popupvaild} className="contentPopup active" >
+           <div class="close-btn" onClick={togglePopup} ><Link to="/">start</Link>;</div>
+           <h1>GAME OVER😢</h1>
+               <div>{input}</div>
+               <div>{score}</div>
+               {/* <div></div> */}
+           <div className="closeVaildButton"><i className="fas fa-check-circle"></i></div>
+           </div>
+       </div>)
+  }
   return (
     <div>
       <Router>
@@ -182,6 +169,9 @@ function App() {
                 input={input}
                 score={score}
                 strike={strike}
+                qoustion={qoustion}
+                newgame={newgame}
+                state={state}
               />
             )}
           />
@@ -194,6 +184,7 @@ function App() {
                 getPlayerName={getPlayerName}
                 input={input}
                 leaderBoardTable={leaderBoardTable}
+
               />
             )}
           />
