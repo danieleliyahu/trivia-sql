@@ -19,12 +19,12 @@ function App() {
   const [strike, setStrike] = useState(0);
   const [input, setInput] = useState();
   const [QuestionInfo, setQuestionInfo] = useState();
-  let rankstate;
   const [leaderBoardTable, setLeaderBoardTable] = useState();
   const questionContainer = useRef();
   const newgame = useRef();
   const popupvaild = useRef();
-
+  // const [isSavedQuestion, setIsSavedQuestion] = useState();
+  let rankstate;
 
   const onButtonClick = (e) => {
     setcount(count + 1);
@@ -71,12 +71,13 @@ function App() {
       .get(`/question`)
       .then(({ data }) => {
         if (data) {
+          // setIsSavedQuestion(false);
           const fullQuestion = data.map((fullQuestion, i) => {
             if (undefined === fullQuestion.options.answer1) {
-              setQuestionInfo(fullQuestion)
+              setQuestionInfo(fullQuestion);
               setanswer(fullQuestion.options.answer);
             } else {
-              setQuestionInfo(fullQuestion)
+              setQuestionInfo(fullQuestion);
               setanswer(fullQuestion.options.answer1);
             }
             const options = [
@@ -92,16 +93,16 @@ function App() {
                   <h1 className={"question"}>
                     {fullQuestion.question.template}
                   </h1>
-                  <div   onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
                     {shuffledOptions[0]}
                   </div>
-                  <div  onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
                     {shuffledOptions[1]}
                   </div>
-                  <div   onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
                     {shuffledOptions[2]}
                   </div>
-                  <div  onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
                     {shuffledOptions[3]}
                   </div>
                 </div>
@@ -121,9 +122,14 @@ function App() {
   }, []);
 
   useEffect(() => {
-    getQuestion();
+    if ((count % 3 === 0) & (count >= 1)) {
+      getSavedQuestion();
+      console.log("im a saved question");
+    } else {
+      getQuestion();
+      console.log("im a random question");
+    }
     if (strike !== 2) {
-
       ratePopupWindow();
       if (count >= 1) {
         popupvaild.current.className = "popup active";
@@ -146,29 +152,85 @@ function App() {
   const togglePopup = () => {
     popupvaild.current.className = "popup";
   };
-  const postQuestionRating = ()=>{
-      axios({
-        method: 'post',
-        url: "/questionRating",
-        data: {
-            type: QuestionInfo.question.type,
-            question_str: QuestionInfo.question.template,
-            template: QuestionInfo.question.template,
-            option1: QuestionInfo.options.option1,
-            option2: QuestionInfo.options.option2,
-            option3: QuestionInfo.options.option3,
-            answer: QuestionInfo.options.answer,
-            rating: rankstate,
-            number_of_ratings: 0
-        }
-      });
 
-  }
-  const onClickRank = (number)=>{
-    rankstate=number
-    postQuestionRating()
-    togglePopup()
-  }
+  const postQuestionRating = () => {
+    axios({
+      method: "post",
+      url: "/questionRating",
+      data: {
+        type: QuestionInfo.question.type,
+        question_str: QuestionInfo.question.template,
+        template: QuestionInfo.question.template,
+        option1: QuestionInfo.options.option1,
+        option2: QuestionInfo.options.option2,
+        option3: QuestionInfo.options.option3,
+        answer: QuestionInfo.options.answer,
+        rating: rankstate,
+        number_of_ratings: 0,
+      },
+    });
+  };
+
+  const getSavedQuestion = () => {
+    axios
+      .get(`/savedQuestion`)
+      .then(({ data }) => {
+        if (data) {
+          // setIsSavedQuestion(true);
+          const fullQuestion = data.map((fullQuestion, i) => {
+            if (fullQuestion.answer === "0") {
+              fullQuestion.answer = false;
+            } else if (fullQuestion.answer === "1") {
+              fullQuestion.answer = true;
+            }
+            const options = [
+              fullQuestion.answer,
+              fullQuestion.option1,
+              fullQuestion.option2,
+              fullQuestion.option3,
+            ];
+            const shuffledOptions = shuffleArray(options);
+            return (
+              <>
+                <div key={i}>
+                  <h1 className={"question"}>{fullQuestion.template}</h1>
+                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                    {shuffledOptions[0]}
+                  </div>
+                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                    {shuffledOptions[1]}
+                  </div>
+                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                    {shuffledOptions[2]}
+                  </div>
+                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                    {shuffledOptions[3]}
+                  </div>
+                </div>
+              </>
+            );
+          });
+          setQuestion(fullQuestion);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const incrementRaitings = () => {
+    axios.patch("/questionRating/:id", { id: 1 });
+  };
+
+  const onClickRank = (number) => {
+    rankstate = number;
+    // if (isSavedQuestion) {
+    //   // incrementRaitings();
+    // } else {
+    postQuestionRating();
+    // }
+    togglePopup();
+  };
   const ratePopupWindow = () => {
     return setPopupRateState(
       <div className="popup " ref={popupvaild} id="popup-1">
@@ -177,12 +239,12 @@ function App() {
           <div class="close-btn" onClick={togglePopup}></div>
           <h1>PLEASE RATE THE QUESTION👍</h1>
           <div>
-          <div   onClick={(e) => onClickRank(1)} >⭐</div>
-          <div   onClick={(e) => onClickRank(2)} >⭐⭐</div>
-          <div   onClick={(e) => onClickRank(3)} >⭐⭐⭐</div>
-          <div   onClick={(e) => onClickRank(4)} >⭐⭐⭐⭐</div>
-          <div   onClick={(e) => onClickRank(5)} >⭐⭐⭐⭐⭐</div>
-         </div>
+            <div onClick={(e) => onClickRank(1)}>⭐</div>
+            <div onClick={(e) => onClickRank(2)}>⭐⭐</div>
+            <div onClick={(e) => onClickRank(3)}>⭐⭐⭐</div>
+            <div onClick={(e) => onClickRank(4)}>⭐⭐⭐⭐</div>
+            <div onClick={(e) => onClickRank(5)}>⭐⭐⭐⭐⭐</div>
+          </div>
           <div className="closeVaildButton">
             <i className="fas fa-check-circle"></i>
           </div>
