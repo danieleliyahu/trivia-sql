@@ -58,7 +58,10 @@ app.get("/", (req, res) => {
 });
 
 app.get("/leaderBoard", (req, res) => {
-  Player.findAll({})
+  Player.findAll({
+    order: [["score", "DESC"]],
+    limit: 10,
+  })
     .then(async (player) => {
       res.send(player);
     })
