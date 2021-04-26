@@ -267,23 +267,23 @@ app.get("/savedQuestion", async (req, res) => {
   res.json([savedQuestion]);
 });
 
-app.post("/questionRating", async (req, res) => {
-  const questionRating = await SavedQuestion.create({
-    type: req.body.type,
-    question_str: req.body.template,
-    option1: req.body.option1,
-    option2: req.body.option2,
-    option3: req.body.option3,
-    option4: null,
-    answer: req.body.answer,
-    rating: req.body.rating,
-    number_of_ratings: req.body.number_of_ratings,
-    template: req.body.template,
-    created_at: Date.now(),
-    updated_at: Date.now(),
-  });
-  console.log(questionRating);
-});
+// app.post("/questionRating", async (req, res) => {
+//   const questionRating = await SavedQuestion.create({
+//     type: req.body.type,
+//     question_str: req.body.template,
+//     option1: req.body.option1,
+//     option2: req.body.option2,
+//     option3: req.body.option3,
+//     option4: null,
+//     answer: req.body.answer,
+//     rating: req.body.rating,
+//     number_of_ratings: req.body.number_of_ratings,
+//     template: req.body.template,
+//     created_at: Date.now(),
+//     updated_at: Date.now(),
+//   });
+//   console.log(questionRating);
+// });
 
 // app.patch("/questionRating/:id", async (req, res) => {
 //   const { id } = req.params;
@@ -293,8 +293,9 @@ app.post("/questionRating", async (req, res) => {
 //   );
 // });
 
-app.post("/fuckmylife", async (req, res) => {
+app.post("/rating", async (req, res) => {
   const lastRatedQuestion = req.body;
+  console.log(lastRatedQuestion, "lastRatedQuestion");
 
   const foundQuestion = await SavedQuestion.findOne({
     where: {
@@ -308,6 +309,10 @@ app.post("/fuckmylife", async (req, res) => {
 
   if (foundQuestion) {
     const foundQuestionJson = foundQuestion.toJSON();
+    console.log(
+      foundQuestionJson,
+      "foundQuestionJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ"
+    );
 
     const userRaiting =
       (foundQuestionJson.number_of_ratings * foundQuestionJson.rating +
@@ -327,6 +332,7 @@ app.post("/fuckmylife", async (req, res) => {
     };
   }
 
+  console.log(questionToInsert, "questionToInsert");
   SavedQuestion.upsert(questionToInsert, {
     where: {
       [Op.and]: [

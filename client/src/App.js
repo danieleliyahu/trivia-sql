@@ -154,21 +154,39 @@ function App() {
   };
 
   const postQuestionRating = () => {
-    axios({
-      method: "post",
-      url: "/questionRating",
-      data: {
-        type: QuestionInfo.question.type,
-        question_str: QuestionInfo.question.template,
-        template: QuestionInfo.question.template,
-        option1: QuestionInfo.options.option1,
-        option2: QuestionInfo.options.option2,
-        option3: QuestionInfo.options.option3,
-        answer: QuestionInfo.options.answer,
-        rating: rankstate,
-        number_of_ratings: 0,
-      },
-    });
+    if (QuestionInfo.saved === true) {
+      axios({
+        method: "post",
+        url: "/rating",
+        data: {
+          type: QuestionInfo.type,
+          question_str: QuestionInfo.template,
+          template: QuestionInfo.template,
+          option1: QuestionInfo.option1,
+          option2: QuestionInfo.option2,
+          option3: QuestionInfo.option3,
+          answer: QuestionInfo.answer,
+          rating: rankstate,
+          // number_of_ratings: 0,
+        },
+      });
+    } else {
+      axios({
+        method: "post",
+        url: "/rating",
+        data: {
+          type: QuestionInfo.question.type,
+          question_str: QuestionInfo.question.template,
+          template: QuestionInfo.question.template,
+          option1: QuestionInfo.options.option1,
+          option2: QuestionInfo.options.option2,
+          option3: QuestionInfo.options.option3,
+          answer: QuestionInfo.options.answer,
+          rating: rankstate,
+          // number_of_ratings: 0,
+        },
+      });
+    }
   };
 
   const getSavedQuestion = () => {
@@ -178,6 +196,9 @@ function App() {
         if (data) {
           // setIsSavedQuestion(true);
           const fullQuestion = data.map((fullQuestion, i) => {
+            fullQuestion.saved = true;
+            setQuestionInfo(fullQuestion);
+
             if (fullQuestion.answer === "0") {
               fullQuestion.answer = false;
             } else if (fullQuestion.answer === "1") {
@@ -228,6 +249,7 @@ function App() {
     //   // incrementRaitings();
     // } else {
     postQuestionRating();
+
     // }
     togglePopup();
   };
