@@ -282,8 +282,8 @@ function App() {
       <div className="popup active" ref={popupvaild} id="popup-1">
         <div className="overlay "></div>
         <div ref={popupvaild} className="contentPopup active">
-          <div class="close-btn" onClick={togglePopup}>
-            <Link to="/">start</Link>;
+          <div class="close-btn" >
+            <Link to="/" >start</Link>;
           </div>
           <h1>GAME OVER😢</h1>
           <div>{input}</div>

@@ -132,11 +132,13 @@ app.get("/question", async (req, res) => {
         if (is_first) {
           other3Options = await relavantModel.findAll({
             where: { [columnName]: { [Op.gt]: answer } },
+            order: Sequelize.literal("rand()"),
             limit: 3,
           });
         } else {
           other3Options = await relavantModel.findAll({
             where: { [columnName]: { [Op.lt]: answer } },
+            order: Sequelize.literal("rand()"),
             limit: 3,
           });
         }
@@ -260,14 +262,14 @@ app.post("/leaderBoard", async (req, res) => {
   console.log(playerRecord);
 });
 
-app.get("/savedQuestion", async (req, res) => {
-  const savedQuestion = await SavedQuestion.findOne({
-    order: Sequelize.literal("rand()"),
-  });
-  res.json([savedQuestion]);
-});
+// app.get("/savedQuestion", async (req, res) => {
+//   const savedQuestion = await SavedQuestion.findOne({
+//     order: Sequelize.literal("rand()"),
+//   });
+//   res.json([savedQuestion]);
+// });
 
-app.get("/questionChance", async (req, res) => {
+app.get("/savedQuestion", async (req, res) => {
   const totalRating = await SavedQuestion.findAll({
     attributes: [
       "question_str",
@@ -275,17 +277,40 @@ app.get("/questionChance", async (req, res) => {
       [sequelize.fn("sum", sequelize.col("rating")), "total_rating"],
     ],
   });
-  const allQuestions = await SavedQuestion.findAll({});
+  let allQuestions = await SavedQuestion.findAll({});
 
-  const questionChance = await allQuestions.map((question) => {
+  let questionChance = await allQuestions.map((question,i) => {
     let questionWithTotalRating = {
       ...question.toJSON(),
       chance: question.toJSON().rating / totalRating[0].toJSON().total_rating,
     };
-    return questionWithTotalRating;
-  });
+    
 
-  res.json(questionChance);
+    
+    // console.log(weightedRandom({[questionChance]:questionChance.rating}))
+    // console.log(weightedRandom({[JSON.stringify(questionWithTotalRating)]:questionWithTotalRating.rating}))
+
+  
+    return {...questionWithTotalRating};
+  });
+  function weightedRandom(prob) {
+    let i, sum=0, r=Math.random();
+    for (i in prob) {
+      sum += prob[i];
+      if (r <= sum) return i;
+    }
+  }
+
+let object = questionChance.reduce(
+  (obj, item) => Object.assign(obj, { [JSON.stringify(item)]: item.chance}), {});
+
+// console.log(object)
+  // console.log(questionChance)
+  // let x = {...questionChance}
+    let QuestionByChanceweightedRandom = weightedRandom(object)
+    console.log(QuestionByChanceweightedRandom)
+//  console.log(...questionChance)
+  res.json([JSON.parse(QuestionByChanceweightedRandom)]);
 });
 
 // app.post("/questionRating", async (req, res) => {
