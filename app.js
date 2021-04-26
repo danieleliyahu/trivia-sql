@@ -285,20 +285,57 @@ app.post("/questionRating", async (req, res) => {
   console.log(questionRating);
 });
 
-app.patch("/questionRating/:id", async (req, res) => {
-  const { id } = req.params;
-  const x = await SavedQuestion.update(
-    { number_of_ratings: sequelize.literal("number_of_ratings + 1") },
-    { where: { id: id } }
-  );
+// app.patch("/questionRating/:id", async (req, res) => {
+//   const { id } = req.params;
+//   const x = await SavedQuestion.update(
+//     { number_of_ratings: sequelize.literal("number_of_ratings + 1") },
+//     { where: { id: id } }
+//   );
+// });
 
-  // Ticket.findOne({ _id: ticketId })
-  //   .then((result) => {
-  //     result.updateOne({ done: true }).then((_) => {
-  //       res.status(200).json({ updated: true });
-  //     });
-  //   })
-  // .catch((err) => res.status(500).json({ error: err.message }));
+app.post("/fuckmylife", async (req, res) => {
+  const lastRatedQuestion = req.body;
+
+  const foundQuestion = await SavedQuestion.findOne({
+    where: {
+      [Op.and]: [
+        { question_str: lastRatedQuestion.question_str },
+        { option1: lastRatedQuestion.option1 },
+        { option2: lastRatedQuestion.option2 },
+      ],
+    },
+  });
+
+  if (foundQuestion) {
+    const foundQuestionJson = foundQuestion.toJSON();
+
+    const userRaiting =
+      (foundQuestionJson.number_of_ratings * foundQuestionJson.rating +
+        lastRatedQuestion.rating) /
+      (foundQuestionJson.number_of_ratings + 1);
+
+    questionToInsert = {
+      ...foundQuestionJson,
+      rating: userRaiting,
+      number_of_ratings: foundQuestionJson.number_of_ratings + 1,
+    };
+  } else {
+    console.log("else");
+    questionToInsert = {
+      ...lastRatedQuestion,
+      number_of_ratings: 1,
+    };
+  }
+
+  SavedQuestion.upsert(questionToInsert, {
+    where: {
+      [Op.and]: [
+        { question_str: lastRatedQuestion.question_str },
+        { option1: lastRatedQuestion.option1 },
+        { option2: lastRatedQuestion.option2 },
+      ],
+    },
+  });
+  res.send("success");
 });
-
 module.exports = app;

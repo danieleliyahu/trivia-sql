@@ -218,9 +218,9 @@ function App() {
       });
   };
 
-  const incrementRaitings = () => {
-    axios.patch("/questionRating/:id", { id: 1 });
-  };
+  // const incrementRaitings = () => {
+  //   axios.patch("/questionRating/:id", { id: 1 });
+  // };
 
   const onClickRank = (number) => {
     rankstate = number;
