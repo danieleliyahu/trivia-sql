@@ -267,6 +267,27 @@ app.get("/savedQuestion", async (req, res) => {
   res.json([savedQuestion]);
 });
 
+app.get("/questionChance", async (req, res) => {
+  const totalRating = await SavedQuestion.findAll({
+    attributes: [
+      "question_str",
+      "rating",
+      [sequelize.fn("sum", sequelize.col("rating")), "total_rating"],
+    ],
+  });
+  const allQuestions = await SavedQuestion.findAll({});
+
+  const questionChance = await allQuestions.map((question) => {
+    let questionWithTotalRating = {
+      ...question.toJSON(),
+      chance: question.toJSON().rating / totalRating[0].toJSON().total_rating,
+    };
+    return questionWithTotalRating;
+  });
+
+  res.json(questionChance);
+});
+
 // app.post("/questionRating", async (req, res) => {
 //   const questionRating = await SavedQuestion.create({
 //     type: req.body.type,
