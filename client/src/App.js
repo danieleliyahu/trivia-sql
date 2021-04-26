@@ -198,11 +198,13 @@ function App() {
           const fullQuestion = data.map((fullQuestion, i) => {
             fullQuestion.saved = true;
             setQuestionInfo(fullQuestion);
-
+            setanswer(fullQuestion.answer)
             if (fullQuestion.answer === "0") {
-              fullQuestion.answer = false;
+              setanswer("false")
+              fullQuestion.answer = false
             } else if (fullQuestion.answer === "1") {
-              fullQuestion.answer = true;
+              setanswer("true")
+              fullQuestion.answer = true
             }
             const options = [
               fullQuestion.answer,
