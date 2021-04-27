@@ -2017,7 +2017,7 @@ module.exports = {
         created_at: new Date(),
         updated_at: new Date(),
       },
-    ]);
+    ].map((country, i) => ({ id: i + 1, ...country })));
   },
 
   down: async (queryInterface, Sequelize) => {

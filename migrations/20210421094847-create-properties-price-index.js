@@ -4,11 +4,10 @@ module.exports = {
     await queryInterface.createTable('Properties_Price_Indices', {
       id: {
         allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
         type: Sequelize.INTEGER
       },
       country: {
+        primaryKey: true,
         type: Sequelize.STRING
       },
       price_to_income_ratio: {

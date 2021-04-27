@@ -1,27 +1,26 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-	class CrimeIndex extends Model {
+	class Avatar extends Model {
 		/**
 		 * Helper method for defining associations.
 		 * This method is not a part of Sequelize lifecycle.
 		 * The `models/index` file will call this method automatically.
 		 */
 		static associate(models) {
-			// define association here
+			this.hasMany(models.Player, { foreignKey: "avatar_id" });
 		}
 	}
-	CrimeIndex.init(
+	Avatar.init(
 		{
-			country: DataTypes.STRING,
-			crime_index: DataTypes.FLOAT,
-			safety_index: DataTypes.FLOAT,
+			img_src: DataTypes.STRING,
 		},
 		{
 			sequelize,
-			modelName: "CrimeIndex",
-			tableName: "crime_indices",
+			modelName: "Avatar",
+			tableName: "avatars",
+			underscored: true,
 		}
 	);
-	return CrimeIndex;
+	return Avatar;
 };

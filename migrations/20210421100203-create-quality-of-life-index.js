@@ -4,14 +4,13 @@ module.exports = {
 		await queryInterface.createTable("quality_of_life_indices", {
 			id: {
 				allowNull: false,
-				autoIncrement: true,
-				primaryKey: true,
 				type: Sequelize.INTEGER,
 			},
 			country: {
+				primaryKey: true,
 				type: Sequelize.STRING,
 			},
-			quality_of_life_Index: {
+			quality_of_life_index: {
 				type: Sequelize.INTEGER,
 			},
 			purchasing_power_index: {

@@ -4,30 +4,29 @@ module.exports = {
     await queryInterface.createTable('population_density', {
       id: {
         allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
         type: Sequelize.INTEGER
+      },
+      country_or_dependent_territory: {
+        primaryKey: true,
+        type: Sequelize.STRING
       },
       rank: {
         type: Sequelize.STRING
       },
-      country_or_dependent_territory: {
-        type: Sequelize.STRING
-      },
       area_km2: {
-        type: Sequelize.STRING
+        type: Sequelize.FLOAT
       },
       area_mi2: {
-        type: Sequelize.STRING
+        type: Sequelize.FLOAT
       },
       population: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
       },
       density_popkm2: {
-        type: Sequelize.STRING
+        type: Sequelize.FLOAT
       },
       density_popmi2: {
-        type: Sequelize.STRING
+        type: Sequelize.FLOAT
       },
       date: {
         type: Sequelize.DATE

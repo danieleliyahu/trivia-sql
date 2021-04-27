@@ -10,19 +10,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+        this.belongsTo(models.Country, { targetKey: "name", foreignKey: "country_or_dependent_territory" });
     }
   };
   PopulationDensity.init({
-    rank: DataTypes.STRING,
     country_or_dependent_territory: DataTypes.STRING,
     area_km2: DataTypes.STRING,
-    area_mi2: DataTypes.STRING,
     population: DataTypes.STRING,
     density_popkm2: DataTypes.STRING,
-    density_popmi2: DataTypes.STRING,
-    date: DataTypes.DATE,
-    population_source: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'PopulationDensity',
