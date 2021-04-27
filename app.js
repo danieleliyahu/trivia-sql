@@ -73,7 +73,7 @@ app.get("/question", async (req, res) => {
     try {
       let questionData = await QuestionTemplate.findOne({
         order: Sequelize.literal("rand()"),
-        // where: { [Op.and]: [{ type: 2 }] },
+        // where: { [Op.and]: [{ type: 1}] },
         // attributes: ["template", "table_name", "model_name", "column_name", "type"],
       });
       const modelName = questionData.model_name;
@@ -115,6 +115,7 @@ app.get("/question", async (req, res) => {
         optionsData = await Country.findAll({
           order: Sequelize.literal("rand()"),
           attributes: ["name"],
+          distinct: true,
           limit: 1,
         });
         const names = optionsData.map((data) => {
@@ -125,6 +126,7 @@ app.get("/question", async (req, res) => {
         const rowsFromRelevantTable = await relavantModel.findAll({
           where: { [relevantName]: names },
           attributes: [columnName],
+          distinct: true,
         });
         const answer = rowsFromRelevantTable[0].toJSON()[columnName];
         const is_first = questionData.toJSON()["is_first"];
@@ -133,12 +135,14 @@ app.get("/question", async (req, res) => {
           other3Options = await relavantModel.findAll({
             where: { [columnName]: { [Op.gt]: answer } },
             order: Sequelize.literal("rand()"),
+            distinct: true,
             limit: 3,
           });
         } else {
           other3Options = await relavantModel.findAll({
             where: { [columnName]: { [Op.lt]: answer } },
             order: Sequelize.literal("rand()"),
+            distinct: true,
             limit: 3,
           });
         }
@@ -146,6 +150,9 @@ app.get("/question", async (req, res) => {
           console.log(data.toJSON()[relevantName]);
           return data.toJSON()[relevantName];
         });
+        if(name[0]===undefined || name[1]===undefined || name[2]===undefined || name[0]===names[0] || name[1]===names[0] || name[2]===names[0]){
+        return  randomQuestion()
+        }
         allTheOption = {
           answer: names[0],
           option1: name[0],
@@ -157,6 +164,7 @@ app.get("/question", async (req, res) => {
         optionsData = await Country.findAll({
           order: Sequelize.literal("rand()"),
           attributes: ["name"],
+          distinct: true,
           limit: 2,
         });
         const names = optionsData.map((data) => {
@@ -262,13 +270,6 @@ app.post("/leaderBoard", async (req, res) => {
   console.log(playerRecord);
 });
 
-// app.get("/savedQuestion", async (req, res) => {
-//   const savedQuestion = await SavedQuestion.findOne({
-//     order: Sequelize.literal("rand()"),
-//   });
-//   res.json([savedQuestion]);
-// });
-
 app.get("/savedQuestion", async (req, res) => {
   const totalRating = await SavedQuestion.findAll({
     attributes: [
@@ -284,15 +285,9 @@ app.get("/savedQuestion", async (req, res) => {
       ...question.toJSON(),
       chance: question.toJSON().rating / totalRating[0].toJSON().total_rating,
     };
-    
-
-    
-    // console.log(weightedRandom({[questionChance]:questionChance.rating}))
-    // console.log(weightedRandom({[JSON.stringify(questionWithTotalRating)]:questionWithTotalRating.rating}))
-
-  
     return {...questionWithTotalRating};
   });
+  console.log(questionChance)
   function weightedRandom(prob) {
     let i, sum=0, r=Math.random();
     for (i in prob) {
@@ -304,40 +299,12 @@ app.get("/savedQuestion", async (req, res) => {
 let object = questionChance.reduce(
   (obj, item) => Object.assign(obj, { [JSON.stringify(item)]: item.chance}), {});
 
-// console.log(object)
-  // console.log(questionChance)
-  // let x = {...questionChance}
+console.log(object)
+
     let QuestionByChanceweightedRandom = weightedRandom(object)
-    console.log(QuestionByChanceweightedRandom)
-//  console.log(...questionChance)
+
   res.json([JSON.parse(QuestionByChanceweightedRandom)]);
 });
-
-// app.post("/questionRating", async (req, res) => {
-//   const questionRating = await SavedQuestion.create({
-//     type: req.body.type,
-//     question_str: req.body.template,
-//     option1: req.body.option1,
-//     option2: req.body.option2,
-//     option3: req.body.option3,
-//     option4: null,
-//     answer: req.body.answer,
-//     rating: req.body.rating,
-//     number_of_ratings: req.body.number_of_ratings,
-//     template: req.body.template,
-//     created_at: Date.now(),
-//     updated_at: Date.now(),
-//   });
-//   console.log(questionRating);
-// });
-
-// app.patch("/questionRating/:id", async (req, res) => {
-//   const { id } = req.params;
-//   const x = await SavedQuestion.update(
-//     { number_of_ratings: sequelize.literal("number_of_ratings + 1") },
-//     { where: { id: id } }
-//   );
-// });
 
 app.post("/rating", async (req, res) => {
   const lastRatedQuestion = req.body;
@@ -355,10 +322,6 @@ app.post("/rating", async (req, res) => {
 
   if (foundQuestion) {
     const foundQuestionJson = foundQuestion.toJSON();
-    console.log(
-      foundQuestionJson,
-      "foundQuestionJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ"
-    );
 
     const userRaiting =
       (foundQuestionJson.number_of_ratings * foundQuestionJson.rating +
@@ -371,7 +334,6 @@ app.post("/rating", async (req, res) => {
       number_of_ratings: foundQuestionJson.number_of_ratings + 1,
     };
   } else {
-    console.log("else");
     questionToInsert = {
       ...lastRatedQuestion,
       number_of_ratings: 1,
