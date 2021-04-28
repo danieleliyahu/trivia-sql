@@ -1,4 +1,5 @@
 import "./App.css";
+import "./Popup.css";
 import axios from "axios";
 import Question from "./components/Question";
 import Login from "./components/Login";
@@ -93,16 +94,16 @@ function App() {
                   <h1 className={"question"}>
                     {fullQuestion.question.template}
                   </h1>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[0]}
                   </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[1]}
                   </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[2]}
                   </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[3]}
                   </div>
                 </div>
@@ -198,13 +199,13 @@ function App() {
           const fullQuestion = data.map((fullQuestion, i) => {
             fullQuestion.saved = true;
             setQuestionInfo(fullQuestion);
-            setanswer(fullQuestion.answer)
+            setanswer(fullQuestion.answer);
             if (fullQuestion.answer === "0") {
-              setanswer("false")
-              fullQuestion.answer = false
+              setanswer("false");
+              fullQuestion.answer = false;
             } else if (fullQuestion.answer === "1") {
-              setanswer("true")
-              fullQuestion.answer = true
+              setanswer("true");
+              fullQuestion.answer = true;
             }
             const options = [
               fullQuestion.answer,
@@ -282,8 +283,8 @@ function App() {
       <div className="popup active" ref={popupvaild} id="popup-1">
         <div className="overlay "></div>
         <div ref={popupvaild} className="contentPopup active">
-          <div class="close-btn" >
-            <Link to="/" >start</Link>;
+          <div class="close-btn">
+            <Link to="/">start</Link>;
           </div>
           <h1>GAME OVER😢</h1>
           <div>{input}</div>
