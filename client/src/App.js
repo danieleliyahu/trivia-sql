@@ -3,6 +3,7 @@ import "./Popup.css";
 import axios from "axios";
 import Question from "./components/Question";
 import Login from "./components/Login";
+import LeaderBoard from "./components/LeaderBoard";
 
 import { shuffleArray, gameOver } from "./utils";
 import { useEffect, useRef, useState } from "react";
@@ -160,6 +161,7 @@ function App() {
     }
     if (strike !== 2) {
       ratePopupWindow();
+      console.log(answer , "dsadsadasd")
       if (count >= 1) {
         popupvaild.current.className = "popup active";
       }
@@ -171,7 +173,8 @@ function App() {
     } else {
       setStrike(strike + 1);
       console.log(strike);
-      if ((strike === 2) & (count >= 1)) {
+      if ((strike === 112) & (count >= 1)) {
+        console.log(answer, "dsadsadasd")
         console.log(strike);
         gameOver(input, score, strike, popupWindow, getLeaderBoard);
       }
@@ -222,9 +225,11 @@ function App() {
     axios
       .get(`/savedQuestion`)
       .then(({ data }) => {
+        console.log(data)
         if (data) {
           // setIsSavedQuestion(true);
           const fullQuestion = data.map((fullQuestion, i) => {
+            console.log(fullQuestion.answer)
             fullQuestion.saved = true;
             setQuestionInfo(fullQuestion);
             setanswer(fullQuestion.answer);
@@ -235,20 +240,20 @@ function App() {
               setanswer("true");
               fullQuestion.answer = true;
             }
-            if (typeof fullQuestion.options.answer === "boolean") {
-              console.log(fullQuestion.options.option1);
-              console.log(fullQuestion.options.option2);
+            if (typeof fullQuestion.answer === "boolean") {
+              console.log(fullQuestion.option1);
+              console.log(fullQuestion.option2);
               return (
                 <>
                   <div key={i}>
                     <h1 className={"question"}>
-                      {fullQuestion.question.template}
+                      {fullQuestion.template}
                     </h1>
                     <div onClick={(e) => onButtonClick(e)} className={"option"}>
-                      {fullQuestion.options.option1}
+                      {fullQuestion.option1}
                     </div>
                     <div onClick={(e) => onButtonClick(e)} className={"option"}>
-                      {fullQuestion.options.option2}
+                      {fullQuestion.option2}
                     </div>
                   </div>
                 </>
@@ -265,16 +270,16 @@ function App() {
               <>
                 <div key={i}>
                   <h1 className={"question"}>{fullQuestion.template}</h1>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[0]}
                   </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[1]}
                   </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[2]}
                   </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[3]}
                   </div>
                 </div>
@@ -289,18 +294,11 @@ function App() {
       });
   };
 
-  // const incrementRaitings = () => {
-  //   axios.patch("/questionRating/:id", { id: 1 });
-  // };
+
 
   const onClickRank = (number) => {
     rankstate = number;
-    // if (isSavedQuestion) {
-    //   // incrementRaitings();
-    // } else {
     postQuestionRating();
-
-    // }
     togglePopup();
   };
   const ratePopupWindow = () => {
@@ -373,6 +371,15 @@ function App() {
                 {...props}
                 getPlayerName={getPlayerName}
                 input={input}
+              />
+            )}
+          />
+          <Route
+            exact
+            path="/leaderboard"
+            render={(props) => (
+              <LeaderBoard
+                {...props}
                 leaderBoardTable={leaderBoardTable}
               />
             )}

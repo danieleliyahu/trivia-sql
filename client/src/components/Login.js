@@ -1,20 +1,27 @@
 // import React, { useEffect } from "react";
 // import { useState } from "react";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
+import "../App.css";
 
 const Login = ({ getPlayerName, input, leaderBoardTable }) => {
   return (
     <>
-      <div>
+      <div className={"login"}>
         <h1>Login</h1>
+        <div>
         <input
           onChange={(e) => getPlayerName(e)}
           required
+          className={"loginInput"}
           name="[username]"
           type="text"
           placeholder="enter username"
         />
-        <Link to="/game">start</Link>
+        </div>
+        <div>
+        <Link className={"gameLink"} to="/game">start</Link>
+        <Link className={"leaderBoardLink"} to="/leaderboard">leaderboard</Link>
+       </div>
       </div>
       {leaderBoardTable}
     </>
