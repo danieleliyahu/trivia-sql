@@ -89,12 +89,14 @@ function App() {
                     <h1 className={"question"}>
                       {fullQuestion.question.template}
                     </h1>
-                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                    <div className={"option12"}>
+                    <div  onClick={(e) => onButtonClick(e)} className={"option"}>
                       {fullQuestion.options.option1}
                     </div>
-                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                    <div  onClick={(e) => onButtonClick(e)} className={"option"}>
                       {fullQuestion.options.option2}
                     </div>
+                  </div>
                   </div>
                 </>
               );

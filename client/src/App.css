@@ -32,3 +32,15 @@
   font-size: 25px;
   border: 1px solid;
 }
+.option12 {
+  display: flex;
+}
+.option34 {
+  display: flex;
+}
+.questionDiv {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+}
