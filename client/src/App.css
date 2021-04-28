@@ -4,7 +4,16 @@
   background-color: cadetblue;
   width: 100%;
 }
-
+.login {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  top: 100;
+  margin-top: 25%;
+}
+.loginInput {
+  width: 20%;
+}
 .navBar {
   background-color: black;
   color: white;
@@ -32,6 +41,16 @@
   font-size: 25px;
   border: 1px solid;
 }
+.a {
+  background-color: green;
+
+  color: wheat;
+}
+.b {
+  background-color: rgb(128, 0, 0);
+
+  color: wheat;
+}
 .option12 {
   display: flex;
 }
@@ -43,4 +62,10 @@
   flex-direction: column;
   flex-wrap: nowrap;
   align-content: center;
+}
+.gameLink {
+  width: 20%;
+}
+.leaderBoardLink {
+  width: 20%;
 }
