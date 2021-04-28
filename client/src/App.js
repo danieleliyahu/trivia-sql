@@ -74,12 +74,30 @@ function App() {
         if (data) {
           // setIsSavedQuestion(false);
           const fullQuestion = data.map((fullQuestion, i) => {
+            console.log(fullQuestion.options);
             if (undefined === fullQuestion.options.answer1) {
               setQuestionInfo(fullQuestion);
               setanswer(fullQuestion.options.answer);
             } else {
               setQuestionInfo(fullQuestion);
               setanswer(fullQuestion.options.answer1);
+            }
+            if (typeof fullQuestion.options.answer === "boolean") {
+              return (
+                <>
+                  <div key={i}>
+                    <h1 className={"question"}>
+                      {fullQuestion.question.template}
+                    </h1>
+                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                      {fullQuestion.options.option1}
+                    </div>
+                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                      {fullQuestion.options.option2}
+                    </div>
+                  </div>
+                </>
+              );
             }
             const options = [
               fullQuestion.options.answer,
@@ -94,18 +112,21 @@ function App() {
                   <h1 className={"question"}>
                     {fullQuestion.question.template}
                   </h1>
-                  {shuffledOptions[0]?(<div onClick={(e) => onButtonClick(e)} className={"option"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[0]}
-                  </div>):""}
-                 {shuffledOptions[1]? (<div onClick={(e) => onButtonClick(e)} className={"option"}>
+                  </div>
+
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[1]}
-                  </div>):""}
-                 {shuffledOptions[2]? (<div onClick={(e) => onButtonClick(e)} className={"option"}>
+                  </div>
+
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[2]}
-                  </div>):""}
-                  {shuffledOptions[3]?<div onClick={(e) => onButtonClick(e)} className={"option"}>
+                  </div>
+
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[3]}
-                  </div>:""}
+                  </div>
                 </div>
               </>
             );
@@ -206,6 +227,25 @@ function App() {
             } else if (fullQuestion.answer === "1") {
               setanswer("true");
               fullQuestion.answer = true;
+            }
+            if (typeof fullQuestion.options.answer === "boolean") {
+              console.log(fullQuestion.options.option1);
+              console.log(fullQuestion.options.option2);
+              return (
+                <>
+                  <div key={i}>
+                    <h1 className={"question"}>
+                      {fullQuestion.question.template}
+                    </h1>
+                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                      {fullQuestion.options.option1}
+                    </div>
+                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                      {fullQuestion.options.option2}
+                    </div>
+                  </div>
+                </>
+              );
             }
             const options = [
               fullQuestion.answer,
