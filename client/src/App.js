@@ -108,10 +108,13 @@ function App() {
             const shuffledOptions = shuffleArray(options);
             return (
               <>
-                <div key={i}>
+                <div className={"continer"} key={i}>
+                <div className={"questionDiv"}>
                   <h1 className={"question"}>
                     {fullQuestion.question.template}
                   </h1>
+                  </div>
+                  <div className={"option12"}>
                   <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[0]}
                   </div>
@@ -119,13 +122,15 @@ function App() {
                   <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[1]}
                   </div>
-
-                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                  </div>
+                  <div className={"option34"}>
+                  <div  onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[2]}
                   </div>
 
                   <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[3]}
+                  </div>
                   </div>
                 </div>
               </>
