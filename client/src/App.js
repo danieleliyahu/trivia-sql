@@ -94,18 +94,18 @@ function App() {
                   <h1 className={"question"}>
                     {fullQuestion.question.template}
                   </h1>
-                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                  {shuffledOptions[0]?(<div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[0]}
-                  </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                  </div>):""}
+                 {shuffledOptions[1]? (<div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[1]}
-                  </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                  </div>):""}
+                 {shuffledOptions[2]? (<div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[2]}
-                  </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                  </div>):""}
+                  {shuffledOptions[3]?<div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[3]}
-                  </div>
+                  </div>:""}
                 </div>
               </>
             );
