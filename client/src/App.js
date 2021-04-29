@@ -43,22 +43,26 @@ function App() {
       .get(`/leaderBoard`)
       .then(({ data }) => {
         setLeaderBoardTable(
-          <table>
-            <tr>
-              <th>RANK</th>
-              <th>NAME</th>
-              <th>SCORE</th>
-            </tr>
-            {data.map((row, i) => {
-              return (
-                <tr>
-                  <td>{i + 1}</td>
-                  <td>{row.name}</td>
-                  <td>{row.score}</td>
-                </tr>
-              );
-            })}
-          </table>
+          <div className="leaderboardcontainer">
+            <h1 className="leaderboardheader">LEADER BOARD</h1>
+
+            <table>
+              <tr>
+                <th>RANK</th>
+                <th>NAME</th>
+                <th>SCORE</th>
+              </tr>
+              {data.map((row, i) => {
+                return (
+                  <tr>
+                    <td>{i + 1}</td>
+                    <td>{row.name}</td>
+                    <td>{row.score}</td>
+                  </tr>
+                );
+              })}
+            </table>
+          </div>
         );
         console.log(leaderBoardTable);
       })
@@ -87,17 +91,25 @@ function App() {
               return (
                 <>
                   <div key={i}>
-                    <h1 className={"question"}>
-                      {fullQuestion.question.template}
-                    </h1>
+                    <div className={"questionDiv"}>
+                      <h1 className={"question"}>
+                        {fullQuestion.question.template}
+                      </h1>
+                    </div>
                     <div className={"option12"}>
-                    <div  onClick={(e) => onButtonClick(e)} className={"option"}>
-                      {fullQuestion.options.option1}
+                      <div
+                        onClick={(e) => onButtonClick(e)}
+                        className={"option"}
+                      >
+                        {fullQuestion.options.option1}
+                      </div>
+                      <div
+                        onClick={(e) => onButtonClick(e)}
+                        className={"option"}
+                      >
+                        {fullQuestion.options.option2}
+                      </div>
                     </div>
-                    <div  onClick={(e) => onButtonClick(e)} className={"option"}>
-                      {fullQuestion.options.option2}
-                    </div>
-                  </div>
                   </div>
                 </>
               );
@@ -112,28 +124,28 @@ function App() {
             return (
               <>
                 <div className={"continer"} key={i}>
-                <div className={"questionDiv"}>
-                  <h1 className={"question"}>
-                    {fullQuestion.question.template}
-                  </h1>
+                  <div className={"questionDiv"}>
+                    <h1 className={"question"}>
+                      {fullQuestion.question.template}
+                    </h1>
                   </div>
                   <div className={"option12"}>
-                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
-                    {shuffledOptions[0]}
-                  </div>
+                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                      {shuffledOptions[0]}
+                    </div>
 
-                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
-                    {shuffledOptions[1]}
-                  </div>
+                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                      {shuffledOptions[1]}
+                    </div>
                   </div>
                   <div className={"option34"}>
-                  <div  onClick={(e) => onButtonClick(e)} className={"option"}>
-                    {shuffledOptions[2]}
-                  </div>
+                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                      {shuffledOptions[2]}
+                    </div>
 
-                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
-                    {shuffledOptions[3]}
-                  </div>
+                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                      {shuffledOptions[3]}
+                    </div>
                   </div>
                 </div>
               </>
@@ -161,7 +173,7 @@ function App() {
     }
     if (strike !== 2) {
       ratePopupWindow();
-      console.log(answer , "dsadsadasd")
+      console.log(answer, "dsadsadasd");
       if (count >= 1) {
         popupvaild.current.className = "popup active";
       }
@@ -174,7 +186,7 @@ function App() {
       setStrike(strike + 1);
       console.log(strike);
       if ((strike === 112) & (count >= 1)) {
-        console.log(answer, "dsadsadasd")
+        console.log(answer, "dsadsadasd");
         console.log(strike);
         gameOver(input, score, strike, popupWindow, getLeaderBoard);
       }
@@ -225,11 +237,11 @@ function App() {
     axios
       .get(`/savedQuestion`)
       .then(({ data }) => {
-        console.log(data)
+        console.log(data);
         if (data) {
           // setIsSavedQuestion(true);
           const fullQuestion = data.map((fullQuestion, i) => {
-            console.log(fullQuestion.answer)
+            console.log(fullQuestion.answer);
             fullQuestion.saved = true;
             setQuestionInfo(fullQuestion);
             setanswer(fullQuestion.answer);
@@ -246,9 +258,9 @@ function App() {
               return (
                 <>
                   <div key={i}>
-                    <h1 className={"question"}>
-                      {fullQuestion.template}
-                    </h1>
+                    <div className={"questionDiv"}>
+                      <h1 className={"question"}>{fullQuestion.template}</h1>
+                    </div>
                     <div onClick={(e) => onButtonClick(e)} className={"option"}>
                       {fullQuestion.option1}
                     </div>
@@ -269,7 +281,9 @@ function App() {
             return (
               <>
                 <div key={i}>
-                  <h1 className={"question"}>{fullQuestion.template}</h1>
+                  <div className={"questionDiv"}>
+                    <h1 className={"question"}>{fullQuestion.template}</h1>
+                  </div>
                   <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[0]}
                   </div>
@@ -293,8 +307,6 @@ function App() {
         console.log(err);
       });
   };
-
-
 
   const onClickRank = (number) => {
     rankstate = number;
@@ -367,21 +379,14 @@ function App() {
             exact
             path="/"
             render={(props) => (
-              <Login
-                {...props}
-                getPlayerName={getPlayerName}
-                input={input}
-              />
+              <Login {...props} getPlayerName={getPlayerName} input={input} />
             )}
           />
           <Route
             exact
             path="/leaderboard"
             render={(props) => (
-              <LeaderBoard
-                {...props}
-                leaderBoardTable={leaderBoardTable}
-              />
+              <LeaderBoard {...props} leaderBoardTable={leaderBoardTable} />
             )}
           />
         </Switch>

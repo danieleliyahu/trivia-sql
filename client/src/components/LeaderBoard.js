@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
-const LeaderBoard = ({leaderBoardTable}) => {
-    return (
-        <div>
-            {leaderBoardTable}
-        </div>
-    )
-}
+const LeaderBoard = ({ leaderBoardTable }) => {
+  return <div>{leaderBoardTable}</div>;
+};
 
-export default LeaderBoard
+export default LeaderBoard;
