@@ -3,7 +3,9 @@ import "./Popup.css";
 import axios from "axios";
 import Question from "./components/Question";
 import Login from "./components/Login";
+import Register from "./components/Register";
 import LeaderBoard from "./components/LeaderBoard";
+import SingIn from "./components/SignIn";
 
 import { shuffleArray, gameOver } from "./utils";
 import { useEffect, useRef, useState } from "react";
@@ -22,6 +24,7 @@ function App() {
   const [input, setInput] = useState();
   const [QuestionInfo, setQuestionInfo] = useState();
   const [leaderBoardTable, setLeaderBoardTable] = useState();
+  const [user, setuser] = useState();
   const questionContainer = useRef();
   const newgame = useRef();
   const popupvaild = useRef();
@@ -382,6 +385,24 @@ function App() {
               <Login {...props} getPlayerName={getPlayerName} input={input} />
             )}
           />
+
+          <Route
+            exact
+            path="/register"
+            render={(props) => <Register {...props} />}
+          />
+
+          <Route exact path="/singin">
+            <SingIn
+              loggedIn={() => {
+                setuser(true);
+              }}
+            />
+          </Route>
+          <Route path="/game">
+            {user ? <Question /> : <h1>User not logged</h1>}
+          </Route>
+
           <Route
             exact
             path="/leaderboard"
