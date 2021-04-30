@@ -17,6 +17,14 @@ const Login = ({ getPlayerName, input, leaderBoardTable }) => {
             type="text"
             placeholder="enter username"
           />
+          <input
+            // onChange={(e) => getPlayerName(e)}
+            required
+            className={"loginInput"}
+            name="[username]"
+            type="password"
+            placeholder="enter password"
+          />
         </div>
         <div>
           <Link className={"gameLink"} to="/game">

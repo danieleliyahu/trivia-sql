@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+const users = require("./routes/users");
+
 const cors = require("cors");
 const morgan = require("morgan");
 const Sequelize = require("sequelize");
@@ -15,6 +17,7 @@ const {
   Player,
   QuestionTemplate,
   SavedQuestion,
+  User,
 } = require("./models");
 
 morgan.token("reqbody", (req) => {
@@ -31,6 +34,8 @@ morgan.token("reqbody", (req) => {
 
 app.use(cors());
 app.use(express.json());
+app.use("/users", users);
+
 app.use(
   morgan(
     ":method :url :status :res[content-length] - :response-time ms :reqbody"
@@ -150,8 +155,15 @@ app.get("/question", async (req, res) => {
           console.log(data.toJSON()[relevantName]);
           return data.toJSON()[relevantName];
         });
-        if(name[0]===undefined || name[1]===undefined || name[2]===undefined || name[0]===names[0] || name[1]===names[0] || name[2]===names[0]){
-        return  randomQuestion()
+        if (
+          name[0] === undefined ||
+          name[1] === undefined ||
+          name[2] === undefined ||
+          name[0] === names[0] ||
+          name[1] === names[0] ||
+          name[2] === names[0]
+        ) {
+          return randomQuestion();
         }
         allTheOption = {
           answer: names[0],
@@ -280,28 +292,32 @@ app.get("/savedQuestion", async (req, res) => {
   });
   let allQuestions = await SavedQuestion.findAll({});
 
-  let questionChance = await allQuestions.map((question,i) => {
+  let questionChance = await allQuestions.map((question, i) => {
     let questionWithTotalRating = {
       ...question.toJSON(),
       chance: question.toJSON().rating / totalRating[0].toJSON().total_rating,
     };
-    return {...questionWithTotalRating};
+    return { ...questionWithTotalRating };
   });
-  console.log(questionChance)
+  console.log(questionChance);
   function weightedRandom(prob) {
-    let i, sum=0, r=Math.random();
+    let i,
+      sum = 0,
+      r = Math.random();
     for (i in prob) {
       sum += prob[i];
       if (r <= sum) return i;
     }
   }
 
-let object = questionChance.reduce(
-  (obj, item) => Object.assign(obj, { [JSON.stringify(item)]: item.chance}), {});
+  let object = questionChance.reduce(
+    (obj, item) => Object.assign(obj, { [JSON.stringify(item)]: item.chance }),
+    {}
+  );
 
-console.log(object)
+  console.log(object);
 
-    let QuestionByChanceweightedRandom = weightedRandom(object)
+  let QuestionByChanceweightedRandom = weightedRandom(object);
 
   res.json([JSON.parse(QuestionByChanceweightedRandom)]);
 });
