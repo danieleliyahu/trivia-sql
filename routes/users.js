@@ -5,6 +5,8 @@ const { Router } = require("express");
 const { User, Refresh_token } = require("../models");
 const users = Router();
 require("dotenv").config();
+const { validateToken } = require("../middlewares");
+
 
 users.post("/register", async (req, res) => {
   const { email, userName, password } = req.body;
@@ -75,6 +77,38 @@ users.post("/login", async (req, res) => {
     console.log(error);
     res.sendStatus(500);
   }
+});
+users.post("/tokenValidate", validateToken, (req, res) => {
+  res.json({ valid: true });
+});
+users.post("/token", async(req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(401).send("Refresh Token Required");
+  }
+  const RefreshToken = await Refresh_token.findOne({
+    where: { Refresh_token: token },
+  });
+  if (!RefreshToken) {
+    return res.status(403).send("Invalid Refresh Token");
+  }
+
+  jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).send("Invalid Refresh Token");
+    }
+    const { name, email } = decoded;
+    const accessToken = jwt.sign(
+      { name, email },
+      process.env.ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: "10s",
+      }
+    );
+
+    return res.json({ accessToken });
+  });
 });
 
 module.exports = users;
