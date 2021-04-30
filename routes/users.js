@@ -11,8 +11,8 @@ users.post("/register", async (req, res) => {
 
   let checkUser = await User.findOne({
     where: { email: email },
-  });
-
+  }); 
+  console.log(checkUser)
   if (checkUser) {
     return res.status(409).send("user already exists");
   }

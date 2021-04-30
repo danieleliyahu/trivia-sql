@@ -5,7 +5,7 @@ module.exports = {
       id: {
         type: Sequelize.INTEGER
       },
-      userName: {
+      user_name: {
         type: Sequelize.STRING
       },
       email: {
@@ -16,11 +16,11 @@ module.exports = {
       password: {
         type: Sequelize.STRING
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }
