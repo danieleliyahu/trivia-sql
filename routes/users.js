@@ -2,7 +2,7 @@ const { hashSync, compare } = require("bcrypt");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { Router } = require("express");
-const { User } = require("../models");
+const { User, Refresh_token } = require("../models");
 const users = Router();
 require("dotenv").config();
 
@@ -60,14 +60,17 @@ users.post("/login", async (req, res) => {
       expiresIn: "10s",
     });
 
-    // REFRESHTOKENS.push(refreshToken);
+    const addRefreshTokenToDB = await Refresh_token.create({
+      refresh_token: refreshToken,
+      created_at: Date.now(),
+      updated_at: Date.now(),
+    });
 
-    res.send(isPasswordCorrect);
-    // res.json({
-    //   accessToken,
-    //   refreshToken,
-    //   ...dataInToken,
-    // });
+    res.json({
+      accessToken,
+      refreshToken,
+      ...dataInToken,
+    });
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
