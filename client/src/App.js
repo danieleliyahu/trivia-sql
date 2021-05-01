@@ -8,24 +8,14 @@ import LeaderBoard from "./components/LeaderBoard";
 import SingIn from "./components/SignIn";
 
 import { readCookie, createCookie } from "./utils/cookies";
-
-// import Cookies from "js-cookie";
-
 import { shuffleArray, gameOver } from "./utils";
 import { useEffect, useRef, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Link,
-  Switch,
-  Route,
-  useHistory,
-} from "react-router-dom";
+import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
 
 function App() {
   const [answer, setanswer] = useState(null);
   const [popup, setpopup] = useState(null);
   const [popupRateState, setPopupRateState] = useState(null);
-
   const [question, setQuestion] = useState([]);
   const [clientAnswer, setclientAnswer] = useState(null);
   const [count, setcount] = useState(0);
@@ -38,14 +28,11 @@ function App() {
   const questionContainer = useRef();
   const newgame = useRef();
   const popupvaild = useRef();
-
   const [score, setScore] = useState(0);
-  const [userName, setuserName] = useState();
+  const [userName, setuserName] = useState("guest");
   const [email, setemail] = useState();
-  // let userName;
-  // let email;
-  // const [isSavedQuestion, setIsSavedQuestion] = useState();
   let rankstate;
+
   useEffect(() => {
     tokenValidate();
   }, [validUser]);
@@ -55,9 +42,7 @@ function App() {
     axios
       .post(
         "http://localhost:3001/users/tokenValidate",
-        {
-          //...data
-        },
+        {},
         {
           headers: {
             Authorization: `${token}`,
@@ -65,23 +50,13 @@ function App() {
         }
       )
       .then((result) => {
-        console.log(result.data);
         if (result.data.valid) {
-          // console.log("hiiiiiiiiiiiiiiii")
-          // email=result.data.info.email
-          // userName=result.data.info.userName
-
           setvalidUser(result.data.valid);
           setemail(result.data.info.email);
           setuserName(result.data.info.userName);
-          // setemail()
         } else {
-          // console.log("Byeeeeeeeeeeeeeeeee")
           setvalidUser(false);
-          // setuserName("")
         }
-
-        console.log("hiiiiiiiii");
       })
       .catch((err) => {
         console.log(err);
@@ -95,11 +70,7 @@ function App() {
           token,
         })
         .then((result) => {
-          // console.log(result.data)
-          // console.log("result.data.userName")
-          // console.log(playerName)
           createCookie("accessToken", result.data.accessToken, 1);
-          // setplayerName(result.data.userName)
           tokenValidate();
         });
     }, 9000);
@@ -143,7 +114,6 @@ function App() {
             </table>
           </div>
         );
-        console.log(leaderBoardTable);
       })
       .catch((error) => {
         console.log(error);
@@ -156,9 +126,7 @@ function App() {
       .get(`/question`)
       .then(({ data }) => {
         if (data) {
-          // setIsSavedQuestion(false);
           const fullQuestion = data.map((fullQuestion, i) => {
-            console.log(fullQuestion.options);
             if (undefined === fullQuestion.options.answer1) {
               setQuestionInfo(fullQuestion);
               setanswer(fullQuestion.options.answer);
@@ -245,14 +213,11 @@ function App() {
   useEffect(() => {
     if ((count % 3 === 0) & (count >= 1)) {
       getSavedQuestion();
-      console.log("im a saved question");
     } else {
       getQuestion();
-      console.log("im a random question");
     }
     if (strike !== 2) {
       ratePopupWindow();
-      console.log(answer, "dsadsadasd");
       if (count >= 1) {
         popupvaild.current.className = "popup active";
       }
@@ -263,10 +228,7 @@ function App() {
       }
     } else {
       setStrike(strike + 1);
-      console.log(strike);
       if ((strike === 2) & (count >= 1)) {
-        console.log(answer, "dsadsadasd");
-        console.log(strike);
         gameOver(
           input,
           score,
@@ -281,19 +243,6 @@ function App() {
       }
     }
   }, [count]);
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     create("/users/token", { token: Cookies.get("refreshToken") })
-  //       .then((res) => {
-  //         Cookies.set("accessToken", res.accessToken);
-  //         console.log("refreshed the acces token");
-  //       })
-  //       .catch((err) => console.error(err));
-  //   }, 9000);
-
-  //   return () => clearInterval(interval);
-  // });
 
   const togglePopup = () => {
     popupvaild.current.className = "popup";
@@ -313,7 +262,6 @@ function App() {
           option3: QuestionInfo.option3,
           answer: QuestionInfo.answer,
           rating: rankstate,
-          // number_of_ratings: 0,
         },
       });
     } else {
@@ -329,7 +277,6 @@ function App() {
           option3: QuestionInfo.options.option3,
           answer: QuestionInfo.options.answer,
           rating: rankstate,
-          // number_of_ratings: 0,
         },
       });
     }
@@ -339,11 +286,8 @@ function App() {
     axios
       .get(`/savedQuestion`)
       .then(({ data }) => {
-        console.log(data);
         if (data) {
-          // setIsSavedQuestion(true);
           const fullQuestion = data.map((fullQuestion, i) => {
-            console.log(fullQuestion.answer);
             fullQuestion.saved = true;
             setQuestionInfo(fullQuestion);
             setanswer(fullQuestion.answer);
@@ -355,8 +299,6 @@ function App() {
               fullQuestion.answer = true;
             }
             if (typeof fullQuestion.answer === "boolean") {
-              console.log(fullQuestion.option1);
-              console.log(fullQuestion.option2);
               return (
                 <>
                   <div key={i}>
@@ -437,7 +379,6 @@ function App() {
     );
   };
   const closePopup = () => {
-    console.log("Ddddddddddddddddddddddddddddddd");
     setpopup(null);
   };
   const popupWindow = () => {
@@ -449,16 +390,8 @@ function App() {
             <Link onClick={() => closePopup()} to="/">
               start
             </Link>
-            ;
-            {/*             
-                <button type="button" onClick={closePopup}>
-                      <Link to="/">
-                      X
-                      </Link> 
-                </button> */}
           </div>
           <h1>GAME OVER😢</h1>
-          {/* <div>{userName}</div> */}
           <div>{score}</div>
           <div className="closeVaildButton">
             <i className="fas fa-check-circle"></i>
@@ -470,6 +403,7 @@ function App() {
 
   return (
     <div>
+      hello {userName}
       <Router>
         <Switch>
           {validUser ? (
@@ -498,7 +432,13 @@ function App() {
             exact
             path="/"
             render={(props) => (
-              <Home {...props} getPlayerName={getPlayerName} input={input} />
+              <Home
+                {...props}
+                getPlayerName={getPlayerName}
+                input={input}
+                setuserName={setuserName}
+                setvalidUser={setvalidUser}
+              />
             )}
           />
 
@@ -507,14 +447,6 @@ function App() {
             path="/register"
             render={(props) => <Register {...props} />}
           />
-          {/* tokenValidate */}
-          {/* <Route exact path="/signin">
-            <SingIn
-              loggedIn={() => {
-                setuser(true);
-              }}
-            />
-          </Route> */}
           <Route
             exact
             path="/signin"

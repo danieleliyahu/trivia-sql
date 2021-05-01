@@ -63,17 +63,6 @@ app.get("/", (req, res) => {
     .catch((err) => console.log(err));
 });
 
-// app.get("/leaderBoard", (req, res) => {
-//   Player.findAll({
-//     order: [["score", "DESC"]],
-//     limit: 10,
-//   })
-//     .then(async (player) => {
-//       res.send(player);
-//     })
-//     .catch((err) => console.log(err));
-// });
-
 app.get("/leaderBoard", (req, res) => {
   UserScore.findAll({
     attributes: [
@@ -85,7 +74,6 @@ app.get("/leaderBoard", (req, res) => {
     limit: 10,
   })
     .then(async (player) => {
-      console.log(player);
       res.send(player);
     })
     .catch((err) => console.log(err));
@@ -142,7 +130,6 @@ app.get("/question", async (req, res) => {
           limit: 1,
         });
         const names = optionsData.map((data) => {
-          console.log(data.toJSON().name);
           return data.toJSON().name;
         });
 
@@ -170,7 +157,6 @@ app.get("/question", async (req, res) => {
           });
         }
         const name = other3Options.map((data) => {
-          console.log(data.toJSON()[relevantName]);
           return data.toJSON()[relevantName];
         });
         if (
@@ -198,7 +184,6 @@ app.get("/question", async (req, res) => {
           limit: 2,
         });
         const names = optionsData.map((data) => {
-          console.log(data.toJSON().name);
           return data.toJSON().name;
         });
         const rowsFromRelevantTable = await relavantModel.findAll({
@@ -286,7 +271,6 @@ app.get("/question", async (req, res) => {
   }
   if (!randomQuestion()) {
     randomQuestion();
-    console.log("tried again");
   }
 });
 
@@ -297,10 +281,8 @@ app.post("/leaderBoard", async (req, res) => {
     created_at: Date.now(),
     updated_at: Date.now(),
   });
-  console.log(playerRecord);
 });
 app.post("/userscore", async (req, res) => {
-  console.log(req.body);
   const userScore = await UserScore.create({
     email: req.body.email,
     user_name: req.body.userName,
@@ -327,7 +309,6 @@ app.get("/savedQuestion", async (req, res) => {
     };
     return { ...questionWithTotalRating };
   });
-  console.log(questionChance);
   function weightedRandom(prob) {
     let i,
       sum = 0,
@@ -343,8 +324,6 @@ app.get("/savedQuestion", async (req, res) => {
     {}
   );
 
-  console.log(object);
-
   let QuestionByChanceweightedRandom = weightedRandom(object);
 
   res.json([JSON.parse(QuestionByChanceweightedRandom)]);
@@ -352,8 +331,6 @@ app.get("/savedQuestion", async (req, res) => {
 
 app.post("/rating", async (req, res) => {
   const lastRatedQuestion = req.body;
-  console.log(lastRatedQuestion, "lastRatedQuestion");
-
   const foundQuestion = await SavedQuestion.findOne({
     where: {
       [Op.and]: [
@@ -384,7 +361,6 @@ app.post("/rating", async (req, res) => {
     };
   }
 
-  console.log(questionToInsert, "questionToInsert");
   SavedQuestion.upsert(questionToInsert, {
     where: {
       [Op.and]: [
