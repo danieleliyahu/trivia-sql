@@ -7,13 +7,19 @@ import Register from "./components/Register";
 import LeaderBoard from "./components/LeaderBoard";
 import SingIn from "./components/SignIn";
 
-import { readCookie,createCookie } from "./utils/cookies";
+import { readCookie, createCookie } from "./utils/cookies";
 
 // import Cookies from "js-cookie";
 
 import { shuffleArray, gameOver } from "./utils";
 import { useEffect, useRef, useState } from "react";
-import { BrowserRouter as Router, Link, Switch, Route,useHistory } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Link,
+  Switch,
+  Route,
+  useHistory,
+} from "react-router-dom";
 
 function App() {
   const [answer, setanswer] = useState(null);
@@ -33,7 +39,6 @@ function App() {
   const newgame = useRef();
   const popupvaild = useRef();
 
-
   const [score, setScore] = useState(0);
   const [userName, setuserName] = useState();
   const [email, setemail] = useState();
@@ -42,55 +47,61 @@ function App() {
   // const [isSavedQuestion, setIsSavedQuestion] = useState();
   let rankstate;
   useEffect(() => {
-    tokenValidate()
-  }, [validUser])
+    tokenValidate();
+  }, [validUser]);
   const tokenValidate = () => {
-    let token = (readCookie("accessToken"))
+    let token = readCookie("accessToken");
 
-      axios.post("http://localhost:3001/users/tokenValidate", {
-        //...data
-      }, {
-        headers: {
-          'Authorization': `${token}` 
+    axios
+      .post(
+        "http://localhost:3001/users/tokenValidate",
+        {
+          //...data
+        },
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
         }
-      }).then((result)=>{
-        console.log(result.data)
+      )
+      .then((result) => {
+        console.log(result.data);
         if (result.data.valid) {
           // console.log("hiiiiiiiiiiiiiiii")
           // email=result.data.info.email
           // userName=result.data.info.userName
 
-          setvalidUser(result.data.valid)
-          setemail(result.data.info.email)
-          setuserName(result.data.info.userName)
+          setvalidUser(result.data.valid);
+          setemail(result.data.info.email);
+          setuserName(result.data.info.userName);
           // setemail()
-
-        }else{
+        } else {
           // console.log("Byeeeeeeeeeeeeeeeee")
-          setvalidUser(false)
+          setvalidUser(false);
           // setuserName("")
         }
- 
-        console.log("hiiiiiiiii")
-      }).catch((err)=>{
-        console.log(err)
+
+        console.log("hiiiiiiiii");
       })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   useEffect(() => {
     const interval = setInterval(() => {
-      let token = (readCookie("refreshToken"));
+      let token = readCookie("refreshToken");
       axios
-      .post("http://localhost:3001/users/token", {
-        token,
-      })
-      .then((result) => {
-        // console.log(result.data)
-        // console.log("result.data.userName")
-        // console.log(playerName)
-        createCookie("accessToken", result.data.accessToken,1);
-        // setplayerName(result.data.userName)
-        tokenValidate()
-      })
+        .post("http://localhost:3001/users/token", {
+          token,
+        })
+        .then((result) => {
+          // console.log(result.data)
+          // console.log("result.data.userName")
+          // console.log(playerName)
+          createCookie("accessToken", result.data.accessToken, 1);
+          // setplayerName(result.data.userName)
+          tokenValidate();
+        });
     }, 9000);
 
     return () => clearInterval(interval);
@@ -118,13 +129,13 @@ function App() {
               <tr>
                 <th>RANK</th>
                 <th>NAME</th>
-                <th>SCORE</th>
+                <th>BEST SCORE</th>
               </tr>
               {data.map((row, i) => {
                 return (
                   <tr>
                     <td>{i + 1}</td>
-                    <td>{row.name}</td>
+                    <td>{row.user_name}</td>
                     <td>{row.score}</td>
                   </tr>
                 );
@@ -256,7 +267,17 @@ function App() {
       if ((strike === 2) & (count >= 1)) {
         console.log(answer, "dsadsadasd");
         console.log(strike);
-        gameOver(input,score,userName,email, strike, popupWindow, getLeaderBoard,setStrike,setScore);
+        gameOver(
+          input,
+          score,
+          userName,
+          email,
+          strike,
+          popupWindow,
+          getLeaderBoard,
+          setStrike,
+          setScore
+        );
       }
     }
   }, [count]);
@@ -416,8 +437,8 @@ function App() {
     );
   };
   const closePopup = () => {
-          console.log("Ddddddddddddddddddddddddddddddd")
-          setpopup(null)
+    console.log("Ddddddddddddddddddddddddddddddd");
+    setpopup(null);
   };
   const popupWindow = () => {
     return setpopup(
@@ -425,16 +446,16 @@ function App() {
         <div className="overlay "></div>
         <div ref={popupvaild} className="contentPopup active">
           <div class="close-btn">
-            <Link onClick={() => closePopup()} to="/" >start</Link>;
-            
-{/*             
+            <Link onClick={() => closePopup()} to="/">
+              start
+            </Link>
+            ;
+            {/*             
                 <button type="button" onClick={closePopup}>
                       <Link to="/">
                       X
                       </Link> 
                 </button> */}
-             
-
           </div>
           <h1>GAME OVER😢</h1>
           {/* <div>{userName}</div> */}
@@ -451,25 +472,28 @@ function App() {
     <div>
       <Router>
         <Switch>
-         { validUser?
-          <Route
-            exact
-            path="/game"
-            render={(props) => (
-              <Question
-                {...props}
-                question={question}
-                input={input}
-                score={score}
-                strike={strike}
-                questionContainer={questionContainer}
-                newgame={newgame}
-                popup={popup}
-                popupRateState={popupRateState}
-                userName={userName}
-              />
-            )}
-          />: "you need to log in"}
+          {validUser ? (
+            <Route
+              exact
+              path="/game"
+              render={(props) => (
+                <Question
+                  {...props}
+                  question={question}
+                  input={input}
+                  score={score}
+                  strike={strike}
+                  questionContainer={questionContainer}
+                  newgame={newgame}
+                  popup={popup}
+                  popupRateState={popupRateState}
+                  userName={userName}
+                />
+              )}
+            />
+          ) : (
+            "you need to log in"
+          )}
           <Route
             exact
             path="/"
@@ -483,7 +507,7 @@ function App() {
             path="/register"
             render={(props) => <Register {...props} />}
           />
-              {/* tokenValidate */}
+          {/* tokenValidate */}
           {/* <Route exact path="/signin">
             <SingIn
               loggedIn={() => {
@@ -495,9 +519,13 @@ function App() {
             exact
             path="/signin"
             render={(props) => (
-              <SingIn {...props} loggedIn={() => {
-                setuser(true);
-              }} tokenValidate={tokenValidate} />
+              <SingIn
+                {...props}
+                loggedIn={() => {
+                  setuser(true);
+                }}
+                tokenValidate={tokenValidate}
+              />
             )}
           />
           <Route path="/game">

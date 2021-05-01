@@ -18,7 +18,7 @@ const {
   QuestionTemplate,
   SavedQuestion,
   User,
-  UserScore
+  UserScore,
 } = require("./models");
 
 morgan.token("reqbody", (req) => {
@@ -63,12 +63,29 @@ app.get("/", (req, res) => {
     .catch((err) => console.log(err));
 });
 
+// app.get("/leaderBoard", (req, res) => {
+//   Player.findAll({
+//     order: [["score", "DESC"]],
+//     limit: 10,
+//   })
+//     .then(async (player) => {
+//       res.send(player);
+//     })
+//     .catch((err) => console.log(err));
+// });
+
 app.get("/leaderBoard", (req, res) => {
-  Player.findAll({
+  UserScore.findAll({
+    attributes: [
+      [Sequelize.fn("MAX", Sequelize.col("score")), "score"],
+      "user_name",
+    ],
+    group: ["user_name"],
     order: [["score", "DESC"]],
     limit: 10,
   })
     .then(async (player) => {
+      console.log(player);
       res.send(player);
     })
     .catch((err) => console.log(err));
@@ -283,7 +300,7 @@ app.post("/leaderBoard", async (req, res) => {
   console.log(playerRecord);
 });
 app.post("/userscore", async (req, res) => {
-  console.log(req.body)
+  console.log(req.body);
   const userScore = await UserScore.create({
     email: req.body.email,
     user_name: req.body.userName,
