@@ -1,4 +1,7 @@
 const jwt = require("jsonwebtoken");
+const {
+  UserScore
+} = require("../models");
 require("dotenv").config();
 function validateToken(req, res, next) {
     const authHeader = req.headers["authorization"];
@@ -13,6 +16,7 @@ function validateToken(req, res, next) {
         console.log(err);
         return res.status(403).send("Invalid Access Token");
       }
+
       req.user = decoded;
       next();
     });

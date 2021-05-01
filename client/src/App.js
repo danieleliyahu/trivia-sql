@@ -17,23 +17,28 @@ import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
 
 function App() {
   const [answer, setanswer] = useState(null);
-  const [state, setstate] = useState(null);
+  const [popup, setpopup] = useState(null);
   const [popupRateState, setPopupRateState] = useState(null);
 
   const [question, setQuestion] = useState([]);
   const [clientAnswer, setclientAnswer] = useState(null);
   const [count, setcount] = useState(0);
-  const [score, setScore] = useState(0);
   const [strike, setStrike] = useState(0);
   const [input, setInput] = useState();
   const [QuestionInfo, setQuestionInfo] = useState();
   const [leaderBoardTable, setLeaderBoardTable] = useState();
-  const [playerName, setplayerName] = useState();
   const [validUser, setvalidUser] = useState();
   const [user, setuser] = useState();
   const questionContainer = useRef();
   const newgame = useRef();
   const popupvaild = useRef();
+
+
+  const [score, setScore] = useState(0);
+  const [userName, setuserName] = useState();
+  const [email, setemail] = useState();
+  // let userName;
+  // let email;
   // const [isSavedQuestion, setIsSavedQuestion] = useState();
   let rankstate;
   useEffect(() => {
@@ -49,16 +54,21 @@ function App() {
           'Authorization': `${token}` 
         }
       }).then((result)=>{
-        // console.log(result.data)
+        console.log(result.data)
         if (result.data.valid) {
-          console.log("hiiiiiiiiiiiiiiii")
+          // console.log("hiiiiiiiiiiiiiiii")
+          // email=result.data.info.email
+          // userName=result.data.info.userName
 
           setvalidUser(result.data.valid)
-          setplayerName(result.data.info.email) 
+          setemail(result.data.info.email)
+          setuserName(result.data.info.userName)
+          // setemail()
+
         }else{
-          console.log("Byeeeeeeeeeeeeeeeee")
+          // console.log("Byeeeeeeeeeeeeeeeee")
           setvalidUser(false)
-          setplayerName("")
+          // setuserName("")
         }
  
         console.log("hiiiiiiiii")
@@ -243,10 +253,10 @@ function App() {
     } else {
       setStrike(strike + 1);
       console.log(strike);
-      if ((strike === 112) & (count >= 1)) {
+      if ((strike === 2) & (count >= 1)) {
         console.log(answer, "dsadsadasd");
         console.log(strike);
-        gameOver(input, score, strike, popupWindow, getLeaderBoard);
+        gameOver(input,score,userName,email, strike, popupWindow, getLeaderBoard,setStrike);
       }
     }
   }, [count]);
@@ -407,7 +417,7 @@ function App() {
   };
 
   const popupWindow = () => {
-    return setstate(
+    return setpopup(
       <div className="popup active" ref={popupvaild} id="popup-1">
         <div className="overlay "></div>
         <div ref={popupvaild} className="contentPopup active">
@@ -415,7 +425,7 @@ function App() {
             <Link to="/">start</Link>;
           </div>
           <h1>GAME OVER😢</h1>
-          <div>{input}</div>
+          {/* <div>{userName}</div> */}
           <div>{score}</div>
           <div className="closeVaildButton">
             <i className="fas fa-check-circle"></i>
@@ -442,9 +452,9 @@ function App() {
                 strike={strike}
                 questionContainer={questionContainer}
                 newgame={newgame}
-                state={state}
+                popup={popup}
                 popupRateState={popupRateState}
-                playerName={playerName}
+                userName={userName}
               />
             )}
           />: "you need to log in"}

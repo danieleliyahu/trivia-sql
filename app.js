@@ -18,6 +18,7 @@ const {
   QuestionTemplate,
   SavedQuestion,
   User,
+  UserScore
 } = require("./models");
 
 morgan.token("reqbody", (req) => {
@@ -280,6 +281,16 @@ app.post("/leaderBoard", async (req, res) => {
     updated_at: Date.now(),
   });
   console.log(playerRecord);
+});
+app.post("/userscore", async (req, res) => {
+  console.log(req.body)
+  const userScore = await UserScore.create({
+    email: req.body.email,
+    user_name: req.body.userName,
+    score: req.body.score,
+    created_at: Date.now(),
+    updated_at: Date.now(),
+  });
 });
 
 app.get("/savedQuestion", async (req, res) => {

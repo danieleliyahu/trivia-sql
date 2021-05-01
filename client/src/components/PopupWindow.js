@@ -1,9 +1,9 @@
 import React from "react";
 
-const PopupWindow = ({ state, popupRateState }) => {
+const PopupWindow = ({ popup, popupRateState }) => {
   return (
     <>
-      <div>{state}</div>
+      <div>{popup}</div>
       <div>{popupRateState}</div>
     </>
   );

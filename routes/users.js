@@ -2,7 +2,7 @@ const { hashSync, compare } = require("bcrypt");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { Router } = require("express");
-const { User, Refresh_token } = require("../models");
+const { User, Refresh_token ,UserScore} = require("../models");
 const { Op } = require("sequelize");
 const users = Router();
 require("dotenv").config();
@@ -49,12 +49,10 @@ users.post("/login", async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(403).send("User or Password incorrect");
     }
-
     const dataInToken = {
       userName: user.userName,
       email: user.email,
     };
-
     const refreshToken = jwt.sign(
       dataInToken,
       process.env.REFRESH_TOKEN_SECRET
@@ -69,11 +67,10 @@ users.post("/login", async (req, res) => {
       created_at: Date.now(),
       updated_at: Date.now(),
     });
-
+    console.log(accessToken,"sssssssssssssssssssssssssssssssssss")
     res.json({
       accessToken,
       refreshToken,
-      ...dataInToken,
     });
   } catch (error) {
     console.log(error);
@@ -96,13 +93,16 @@ users.post("/token", async (req, res) => {
     return res.status(403).send("Invalid Refresh Token");
   }
 
-  jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+  jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, async(err, decoded) => {
     if (err) {
       return res.status(403).send("Invalid Refresh Token");
     }
-    const { name, email } = decoded;
+    const userInfo = await UserScore.findAll({
+      where: {email:decoded.email}
+    })
+    const { userName, email } = decoded;
     const accessToken = jwt.sign(
-      { name, email },
+      { userName, email,userInfo },
       process.env.ACCESS_TOKEN_SECRET,
       {
         expiresIn: "10s",

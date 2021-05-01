@@ -8,14 +8,14 @@ const Question = ({
   strikeRef,
   questionContainer,
   newgame,
-  state,
+  popup,
   popupRateState,
-  playerName
+  userName,
 }) => {
   return (
     <>
       <div className="navBar">
-        <span className="playerstate"> Name: {playerName}</span>
+        <span className="playerstate"> Name: {userName}</span>
         <span className="playerstate" ref={strikeRef}>
           Strikes: {strike}
         </span>
@@ -26,7 +26,7 @@ const Question = ({
           <p>{question}</p>
         </div>
       </div>
-      <PopupWindow state={state} popupRateState={popupRateState} />
+      <PopupWindow popup={popup} popupRateState={popupRateState} />
     </>
   );
 };
