@@ -37,11 +37,12 @@ const saveUserScore = async (email, userName,score) => {
   });
 };
 // getLeaderBoard
-const gameOver = (input, score,userName, email,strike, popupWindow,getLeaderBoard,setStrike ) => {
+const gameOver = (input, score,userName, email,strike, popupWindow,getLeaderBoard,setStrike ,setScore) => {
   console.log(email)
   console.log(userName)
   console.log(score)
   setStrike(0)
+  setScore(0)
   // alert(`GAME OVER ${userName}. YOUR SCORE IS ${score}. YOUR RANK IS 1 `);
   saveUserScore(email,userName,score)
   popupWindow();

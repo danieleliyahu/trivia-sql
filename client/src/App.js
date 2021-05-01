@@ -13,7 +13,7 @@ import { readCookie,createCookie } from "./utils/cookies";
 
 import { shuffleArray, gameOver } from "./utils";
 import { useEffect, useRef, useState } from "react";
-import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Link, Switch, Route,useHistory } from "react-router-dom";
 
 function App() {
   const [answer, setanswer] = useState(null);
@@ -256,7 +256,7 @@ function App() {
       if ((strike === 2) & (count >= 1)) {
         console.log(answer, "dsadsadasd");
         console.log(strike);
-        gameOver(input,score,userName,email, strike, popupWindow, getLeaderBoard,setStrike);
+        gameOver(input,score,userName,email, strike, popupWindow, getLeaderBoard,setStrike,setScore);
       }
     }
   }, [count]);
@@ -415,14 +415,26 @@ function App() {
       </div>
     );
   };
-
+  const closePopup = () => {
+          console.log("Ddddddddddddddddddddddddddddddd")
+          setpopup(null)
+  };
   const popupWindow = () => {
     return setpopup(
       <div className="popup active" ref={popupvaild} id="popup-1">
         <div className="overlay "></div>
         <div ref={popupvaild} className="contentPopup active">
           <div class="close-btn">
-            <Link to="/">start</Link>;
+            <Link onClick={() => closePopup()} to="/" >start</Link>;
+            
+{/*             
+                <button type="button" onClick={closePopup}>
+                      <Link to="/">
+                      X
+                      </Link> 
+                </button> */}
+             
+
           </div>
           <h1>GAME OVER😢</h1>
           {/* <div>{userName}</div> */}
