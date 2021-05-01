@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState,useRef } from "react";
 import { Link, useHistory } from "react-router-dom";
 
 import axios from "axios";
@@ -8,9 +8,13 @@ const Register = () => {
   const [email, setemail] = useState();
   const [password, setpassword] = useState();
   const [userName, setuserName] = useState();
+  let emailRef = useRef("")
 
   const location = useHistory();
   const register = () => {
+    if (!emailRef.current.checkValidity()) {
+      return alert("not a valid email")
+    }
     axios
       .post("http://localhost:3001/users/register", {
         email,
@@ -31,7 +35,8 @@ const Register = () => {
       <input
         onChange={(e) => {
           setemail(e.target.value);
-        }}
+        }} 
+        ref={emailRef}
         type="email"
         placeholder="Email"
       />
