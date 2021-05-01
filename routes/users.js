@@ -2,7 +2,7 @@ const { hashSync, compare } = require("bcrypt");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { Router } = require("express");
-const { User, Refresh_token ,UserScore} = require("../models");
+const { User, Refresh_token, UserScore } = require("../models");
 const { Op } = require("sequelize");
 const users = Router();
 require("dotenv").config();
@@ -16,7 +16,6 @@ users.post("/register", async (req, res) => {
       [Op.or]: [{ email: email }, { user_name: userName }],
     },
   });
-  console.log(checkUser);
   if (checkUser) {
     return res.status(409).send("user already exists");
   }
@@ -67,7 +66,6 @@ users.post("/login", async (req, res) => {
       created_at: Date.now(),
       updated_at: Date.now(),
     });
-    console.log(accessToken,"sssssssssssssssssssssssssssssssssss")
     res.json({
       accessToken,
       refreshToken,
@@ -78,7 +76,7 @@ users.post("/login", async (req, res) => {
   }
 });
 users.post("/tokenValidate", validateToken, (req, res) => {
-  res.json({ valid: true ,info:req.user});
+  res.json({ valid: true, info: req.user });
 });
 users.post("/token", async (req, res) => {
   const { token } = req.body;
@@ -93,16 +91,16 @@ users.post("/token", async (req, res) => {
     return res.status(403).send("Invalid Refresh Token");
   }
 
-  jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, async(err, decoded) => {
+  jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
     if (err) {
       return res.status(403).send("Invalid Refresh Token");
     }
     const userInfo = await UserScore.findAll({
-      where: {email:decoded.email}
-    })
+      where: { email: decoded.email },
+    });
     const { userName, email } = decoded;
     const accessToken = jwt.sign(
-      { userName, email,userInfo },
+      { userName, email, userInfo },
       process.env.ACCESS_TOKEN_SECRET,
       {
         expiresIn: "10s",
@@ -111,6 +109,16 @@ users.post("/token", async (req, res) => {
 
     return res.json({ accessToken });
   });
+});
+
+users.delete("/token", (req, res) => {
+  const authHeader = req.headers["authorization"];
+  Refresh_token.destroy({
+    where: {
+      refresh_token: authHeader,
+    },
+  });
+  res.send("logged out");
 });
 
 module.exports = users;

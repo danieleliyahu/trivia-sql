@@ -1,9 +1,24 @@
-// import React, { useEffect } from "react";
-// import { useState } from "react";
-import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import "../App.css";
+import { readCookie, eraseCookie } from "../utils/cookies";
+import axios from "axios";
 
-const Home = ({ getPlayerName, input, leaderBoardTable }) => {
+const Home = ({ leaderBoardTable, setuserName, setvalidUser }) => {
+  const location = useHistory();
+  const deleteToken = () => {
+    const token = readCookie("refreshToken");
+    eraseCookie("refreshToken");
+    eraseCookie("accessToken");
+    axios.delete("/users/token", {
+      headers: {
+        authorization: token,
+      },
+    });
+    setvalidUser(false);
+    setuserName("guest");
+    location.push("/");
+  };
+
   return (
     <>
       <div className={"loginconteiner"}>
@@ -21,6 +36,9 @@ const Home = ({ getPlayerName, input, leaderBoardTable }) => {
           <Link className={"leaderBoardLink"} to="/signin">
             log in
           </Link>
+          <button className={"gameLink"} onClick={deleteToken}>
+            LOG OUT
+          </button>
         </div>
       </div>
       {leaderBoardTable}
