@@ -33,7 +33,7 @@ const SingIn = ({ loggedIn }) => {
   };
   return (
     <div>
-      <h1>Sing In</h1>
+      <h1>Log In</h1>
       <input
         onChange={(e) => {
           setEmail(e.target.value);

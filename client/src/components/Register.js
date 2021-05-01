@@ -1,5 +1,7 @@
 import React from "react";
 import { useState } from "react";
+import { Link, useHistory } from "react-router-dom";
+
 import axios from "axios";
 
 const Register = () => {
@@ -7,6 +9,7 @@ const Register = () => {
   const [password, setpassword] = useState();
   const [userName, setuserName] = useState();
 
+  const location = useHistory();
   const register = () => {
     axios
       .post("http://localhost:3001/users/register", {
@@ -16,6 +19,7 @@ const Register = () => {
       })
       .then((result) => {
         console.log(result.data);
+        location.push("/signin");
       })
       .catch((err) => {
         console.log(err);

@@ -3,18 +3,20 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { Router } = require("express");
 const { User, Refresh_token } = require("../models");
+const { Op } = require("sequelize");
 const users = Router();
 require("dotenv").config();
 const { validateToken } = require("../middlewares");
-
 
 users.post("/register", async (req, res) => {
   const { email, userName, password } = req.body;
 
   let checkUser = await User.findOne({
-    where: { email: email },
-  }); 
-  console.log(checkUser)
+    where: {
+      [Op.or]: [{ email: email }, { user_name: userName }],
+    },
+  });
+  console.log(checkUser);
   if (checkUser) {
     return res.status(409).send("user already exists");
   }
@@ -81,7 +83,7 @@ users.post("/login", async (req, res) => {
 users.post("/tokenValidate", validateToken, (req, res) => {
   res.json({ valid: true });
 });
-users.post("/token", async(req, res) => {
+users.post("/token", async (req, res) => {
   const { token } = req.body;
 
   if (!token) {
