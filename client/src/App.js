@@ -7,7 +7,7 @@ import Register from "./components/Register";
 import LeaderBoard from "./components/LeaderBoard";
 import SingIn from "./components/SignIn";
 
-import { readCookie } from "./utils/cookies";
+import { readCookie,createCookie } from "./utils/cookies";
 
 // import Cookies from "js-cookie";
 
@@ -28,16 +28,59 @@ function App() {
   const [input, setInput] = useState();
   const [QuestionInfo, setQuestionInfo] = useState();
   const [leaderBoardTable, setLeaderBoardTable] = useState();
+  const [playerName, setplayerName] = useState();
+  const [validUser, setvalidUser] = useState();
   const [user, setuser] = useState();
   const questionContainer = useRef();
   const newgame = useRef();
   const popupvaild = useRef();
   // const [isSavedQuestion, setIsSavedQuestion] = useState();
   let rankstate;
+  useEffect(() => {
+    tokenValidate()
+  }, [validUser])
+  const tokenValidate = () => {
+    let token = (readCookie("accessToken"))
 
+      axios.post("http://localhost:3001/users/tokenValidate", {
+        //...data
+      }, {
+        headers: {
+          'Authorization': `${token}` 
+        }
+      }).then((result)=>{
+        // console.log(result.data)
+        if (result.data.valid) {
+          console.log("hiiiiiiiiiiiiiiii")
+
+          setvalidUser(result.data.valid)
+          setplayerName(result.data.info.email) 
+        }else{
+          console.log("Byeeeeeeeeeeeeeeeee")
+          setvalidUser(false)
+          setplayerName("")
+        }
+ 
+        console.log("hiiiiiiiii")
+      }).catch((err)=>{
+        console.log(err)
+      })
+  };
   useEffect(() => {
     const interval = setInterval(() => {
-      console.log(readCookie("accessToken"));
+      let token = (readCookie("refreshToken"));
+      axios
+      .post("http://localhost:3001/users/token", {
+        token,
+      })
+      .then((result) => {
+        // console.log(result.data)
+        // console.log("result.data.userName")
+        // console.log(playerName)
+        createCookie("accessToken", result.data.accessToken,1);
+        // setplayerName(result.data.userName)
+        tokenValidate()
+      })
     }, 9000);
 
     return () => clearInterval(interval);
@@ -386,6 +429,7 @@ function App() {
     <div>
       <Router>
         <Switch>
+         { validUser?
           <Route
             exact
             path="/game"
@@ -400,9 +444,10 @@ function App() {
                 newgame={newgame}
                 state={state}
                 popupRateState={popupRateState}
+                playerName={playerName}
               />
             )}
-          />
+          />: "you need to log in"}
           <Route
             exact
             path="/"
@@ -416,14 +461,23 @@ function App() {
             path="/register"
             render={(props) => <Register {...props} />}
           />
-
-          <Route exact path="/signin">
+              {/* tokenValidate */}
+          {/* <Route exact path="/signin">
             <SingIn
               loggedIn={() => {
                 setuser(true);
               }}
             />
-          </Route>
+          </Route> */}
+          <Route
+            exact
+            path="/signin"
+            render={(props) => (
+              <SingIn {...props} loggedIn={() => {
+                setuser(true);
+              }} tokenValidate={tokenValidate} />
+            )}
+          />
           <Route path="/game">
             {user ? <Question /> : <h1>User not logged</h1>}
           </Route>

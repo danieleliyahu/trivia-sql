@@ -10,11 +10,12 @@ const Question = ({
   newgame,
   state,
   popupRateState,
+  playerName
 }) => {
   return (
     <>
       <div className="navBar">
-        <span className="playerstate"> Name: {input}</span>
+        <span className="playerstate"> Name: {playerName}</span>
         <span className="playerstate" ref={strikeRef}>
           Strikes: {strike}
         </span>

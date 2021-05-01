@@ -81,7 +81,7 @@ users.post("/login", async (req, res) => {
   }
 });
 users.post("/tokenValidate", validateToken, (req, res) => {
-  res.json({ valid: true });
+  res.json({ valid: true ,info:req.user});
 });
 users.post("/token", async (req, res) => {
   const { token } = req.body;

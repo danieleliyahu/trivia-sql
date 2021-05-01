@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { createCookie } from "../utils/cookies";
 
-const SingIn = ({ loggedIn }) => {
+const SingIn = ({ loggedIn ,tokenValidate}) => {
   const [email, setEmail] = useState();
   const [password, setpassword] = useState();
   const [wrongUser, setwrongUser] = useState();
@@ -20,10 +20,11 @@ const SingIn = ({ loggedIn }) => {
         if (result.data === "User or Password incorrect") {
           console.log("user not exists");
         } else {
-          console.log(result.data);
+          // console.log(result.data);
           createCookie("accessToken", result.data.accessToken, 1);
-          createCookie("refreshToken", result.data.refreshToken, 1);
+          createCookie("refreshToken", result.data.refreshToken, 100);
           loggedIn();
+          tokenValidate()
           location.push("/game");
         }
       })
