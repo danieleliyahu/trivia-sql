@@ -3,12 +3,12 @@
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import "../App.css";
 
-const Login = ({ getPlayerName, input, leaderBoardTable }) => {
+const Home = ({ getPlayerName, input, leaderBoardTable }) => {
   return (
     <>
       <div className={"loginconteiner"}>
         <h1 className="loginheader">Login</h1>
-        <div>
+        {/* <div>
           <input
             onChange={(e) => getPlayerName(e)}
             required
@@ -25,13 +25,19 @@ const Login = ({ getPlayerName, input, leaderBoardTable }) => {
             type="password"
             placeholder="enter password"
           />
-        </div>
+        </div> */}
         <div>
           <Link className={"gameLink"} to="/game">
             start
           </Link>
           <Link className={"leaderBoardLink"} to="/leaderboard">
             leaderboard
+          </Link>
+          <Link className={"leaderBoardLink"} to="/register">
+            sign up
+          </Link>
+          <Link className={"leaderBoardLink"} to="/signin">
+            log in
           </Link>
         </div>
       </div>
@@ -40,4 +46,4 @@ const Login = ({ getPlayerName, input, leaderBoardTable }) => {
   );
 };
 
-export default Login;
+export default Home;

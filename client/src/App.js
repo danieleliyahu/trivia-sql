@@ -2,10 +2,14 @@ import "./App.css";
 import "./Popup.css";
 import axios from "axios";
 import Question from "./components/Question";
-import Login from "./components/Login";
+import Home from "./components/Home";
 import Register from "./components/Register";
 import LeaderBoard from "./components/LeaderBoard";
 import SingIn from "./components/SignIn";
+
+import { readCookie } from "./utils/cookies";
+
+// import Cookies from "js-cookie";
 
 import { shuffleArray, gameOver } from "./utils";
 import { useEffect, useRef, useState } from "react";
@@ -30,6 +34,14 @@ function App() {
   const popupvaild = useRef();
   // const [isSavedQuestion, setIsSavedQuestion] = useState();
   let rankstate;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log(readCookie("accessToken"));
+    }, 9000);
+
+    return () => clearInterval(interval);
+  });
 
   const onButtonClick = (e) => {
     setcount(count + 1);
@@ -195,6 +207,19 @@ function App() {
       }
     }
   }, [count]);
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     create("/users/token", { token: Cookies.get("refreshToken") })
+  //       .then((res) => {
+  //         Cookies.set("accessToken", res.accessToken);
+  //         console.log("refreshed the acces token");
+  //       })
+  //       .catch((err) => console.error(err));
+  //   }, 9000);
+
+  //   return () => clearInterval(interval);
+  // });
 
   const togglePopup = () => {
     popupvaild.current.className = "popup";
@@ -382,7 +407,7 @@ function App() {
             exact
             path="/"
             render={(props) => (
-              <Login {...props} getPlayerName={getPlayerName} input={input} />
+              <Home {...props} getPlayerName={getPlayerName} input={input} />
             )}
           />
 
@@ -392,7 +417,7 @@ function App() {
             render={(props) => <Register {...props} />}
           />
 
-          <Route exact path="/singin">
+          <Route exact path="/signin">
             <SingIn
               loggedIn={() => {
                 setuser(true);
