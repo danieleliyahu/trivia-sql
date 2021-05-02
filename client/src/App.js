@@ -78,9 +78,7 @@ function App() {
   };
 
   useEffect(() => {
-    if (readCookie("refreshToken")) {
-      return
-    }
+ 
     const interval = setInterval(() => {
       let token = readCookie("refreshToken");
       axios

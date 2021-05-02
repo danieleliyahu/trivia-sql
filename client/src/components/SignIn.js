@@ -20,6 +20,7 @@ const SingIn = ({ loggedIn, tokenValidate }) => {
         if (result.data === "User or Password incorrect") {
           console.log("user not exists");
         } else {
+          console.log(result.data)
           createCookie("accessToken", result.data.accessToken, 1);
           createCookie("refreshToken", result.data.refreshToken, 100);
           loggedIn();
@@ -37,7 +38,7 @@ const SingIn = ({ loggedIn, tokenValidate }) => {
       <div className="signinpage">
         <h1 className="loginheader">Sign In</h1>
         <h4 className="loginheader2">play and learn about the world</h4>
-        <form>
+        <div className={"error"}>{error}</div>
           <input
             className="loginInput"
             onChange={(e) => {
@@ -57,12 +58,11 @@ const SingIn = ({ loggedIn, tokenValidate }) => {
           <button className={"link linkButton"} onClick={login}>
             Sign in
           </button>
-        </form>
         <p className="joinnow">
           Dont have an account yet? <Link to="/register"> Join now </Link>
         </p>
       </div>
-      {/* <div className={"error"}>{error}</div> */}
+     
     </>
   );
 };
