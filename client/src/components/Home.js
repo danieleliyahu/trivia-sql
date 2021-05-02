@@ -64,6 +64,7 @@ const Home = ({ userName, setuserName, validUser, setvalidUser }) => {
           </div>
         </div>
       </div>
+        </div>
     </>
   );
 };

@@ -9,11 +9,12 @@ const Register = () => {
   const [password, setpassword] = useState();
   const [userName, setuserName] = useState();
   let emailRef = useRef("")
+  const [error, seterror] = useState();
 
   const location = useHistory();
   const register = () => {
     if (!emailRef.current.checkValidity()) {
-      return alert("not a valid email")
+     return seterror("email most contain @")
     }
     axios
       .post("http://localhost:3001/users/register", {
@@ -26,6 +27,7 @@ const Register = () => {
         location.push("/signin");
       })
       .catch((err) => {
+        seterror("email or user name already exist")
         console.log(err);
       });
   };
@@ -54,6 +56,7 @@ const Register = () => {
         placeholder="UserName"
       />
       <button onClick={register}>Sing Up</button>
+    <div className={"error"}>{error}</div>
     </div>
   );
 };
