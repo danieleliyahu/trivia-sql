@@ -53,7 +53,7 @@ function App() {
       )
       .then((result) => {
         if (result.data.valid) {
-          console.log(result.data)
+          console.log(result.data);
           setvalidUser(result.data.valid);
           setemail(result.data.info.email);
           setuserName(result.data.info.userName);
@@ -65,18 +65,18 @@ function App() {
         console.log(err);
       });
   };
-  const refreshToken  = () => {
+  const refreshToken = () => {
     let token = readCookie("refreshToken");
-      axios
-        .post("http://localhost:3001/users/token", {
-          token,
-        })
-        .then((result) => {
-          createCookie("accessToken", result.data.accessToken, 1);
-          tokenValidate();
-        });
+    axios
+      .post("http://localhost:3001/users/token", {
+        token,
+      })
+      .then((result) => {
+        createCookie("accessToken", result.data.accessToken, 1);
+        tokenValidate();
+      });
   };
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       let token = readCookie("refreshToken");
@@ -90,7 +90,6 @@ function App() {
         });
     }, 9000);
     return () => clearInterval(interval);
-   
   });
 
   const onButtonClick = (e) => {
@@ -136,7 +135,6 @@ function App() {
           return;
         }
       });
-
 
   const getUserLeaderBoard = () => {
     axios({
@@ -263,8 +261,8 @@ function App() {
   useEffect(() => {
     getQuestion();
     getLeaderBoard();
-    tokenValidate()
-    refreshToken()
+    tokenValidate();
+    refreshToken();
   }, []);
 
   useEffect(() => {
@@ -460,7 +458,6 @@ function App() {
 
   return (
     <div>
-      hello {userName}
       <Router>
         <Switch>
           {validUser ? (
@@ -493,6 +490,7 @@ function App() {
                 {...props}
                 getPlayerName={getPlayerName}
                 input={input}
+                userName={userName}
                 setuserName={setuserName}
                 validUser={validUser}
                 setvalidUser={setvalidUser}

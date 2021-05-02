@@ -4,62 +4,84 @@
   box-sizing: border-box;
 }
 
+.screen {
+  width: 100%;
+  display: inline-block;
+}
+
+.halfscreen {
+  float: right;
+  width: 60%;
+  background-image: url("./images/blueBackground.webp");
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+}
+
+.hello {
+  /* font-size: 25px; */
+}
+
 .loginconteiner {
   height: 100vh;
+  width: 40%;
   overflow: hidden;
-  background-image: url("./images/blueBackground.webp");
-  /* background-size: cover; */
 }
 
 .loginheader {
   margin-top: 100px;
-  color: rgb(235, 235, 238);
+  color: #1c1a5e;
   font-size: 60px;
+  font-weight: 900;
   padding: 20px;
 }
 
 .loginheader2 {
-  color: rgb(235, 235, 238);
+  color: #1c1a5e;
   font-size: 40px;
   padding: 20px;
 }
 
 .buttons {
-  /* border: 2px solid white; */
-  width: fit-content;
+  width: max-content;
 }
 
 .linkButton {
   background: none;
   color: inherit;
   border: none;
-  padding: 0;
+  padding-top: 8px;
   font: inherit;
   cursor: pointer;
   outline: inherit;
   font-size: inherit;
   font-weight: inherit;
+  width: inherit;
+  color: #121256;
 }
 
 .link {
-  color: rgb(171, 174, 197);
-  padding-left: 20px;
-  margin: 8px 0;
-  border: none;
+  width: 300px;
+  height: 45px;
+  color: #e8e8ee;
+  padding-top: 8px;
+  margin: 8px 15px;
   cursor: pointer;
   text-decoration: none;
   font-size: 20px;
-  font-weight: 700;
   text-transform: uppercase;
   display: block;
-  /* background-color: #fdfdfd; */
+  background-color: #121256;
+  border-radius: 32px;
+  text-align: center;
+  transition: all 0.1s ease-in-out;
 }
 
 .link:hover {
   opacity: 0.9;
 }
 
-/* .loginInput {
+.loginInput {
   width: 200px;
   padding: 10px;
   margin-bottom: 30px;
@@ -153,7 +175,7 @@
   color: rgb(7, 7, 83);
   font-size: 40px;
   padding: 20px;
-} */
+}
 
 table {
   font-family: Arial, Helvetica, sans-serif;
