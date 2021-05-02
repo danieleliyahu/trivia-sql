@@ -5,6 +5,7 @@ import Question from "./components/Question";
 import Home from "./components/Home";
 import Register from "./components/Register";
 import LeaderBoard from "./components/LeaderBoard";
+import UserLeaderBoard from "./components/UserLeaderBoard";
 import SingIn from "./components/SignIn";
 
 import { readCookie, createCookie } from "./utils/cookies";
@@ -23,6 +24,7 @@ function App() {
   const [input, setInput] = useState();
   const [QuestionInfo, setQuestionInfo] = useState();
   const [leaderBoardTable, setLeaderBoardTable] = useState();
+  const [userleaderBoardTable, setuserLeaderBoardTable] = useState();
   const [validUser, setvalidUser] = useState();
   const [user, setuser] = useState();
   const questionContainer = useRef();
@@ -121,6 +123,78 @@ function App() {
           return;
         }
       });
+
+  // const getUserLeaderBoard = () => {
+  //   axios
+  //     .post(`/userleaderBoard`)
+  //     .then(({ data }) => {
+  //       console.log(data);
+  //       setuserLeaderBoardTable(
+  //         <div className="leaderboardcontainer">
+  //           <h1 className="leaderboardheader">LEADER BOARD</h1>
+  //           <table>
+  //             <tr>
+  //               <th>RANK</th>
+  //               <th>BEST SCORE</th>
+  //             </tr>
+  //             {data.map((row, i) => {
+  //               return (
+  //                 <tr>
+  //                   <td>{i + 1}</td>
+  //                   <td>{row.score}</td>
+  //                 </tr>
+  //               );
+  //             })}
+  //           </table>
+  //         </div>
+  //       );
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       if (error.message === "Request failed with status code 404") {
+  //         return;
+  //       }
+  //     });
+  // };
+
+  const getUserLeaderBoard = () => {
+    axios({
+      method: "post",
+      url: "/userleaderBoard",
+      data: {
+        user_name: userName,
+      },
+    })
+      .then(({ data }) => {
+        console.log(data);
+        setuserLeaderBoardTable(
+          <div className="leaderboardcontainer">
+            <h1 className="leaderboardheader">LEADER BOARD</h1>
+            <table>
+              <tr>
+                <th>RANK</th>
+                <th>SCORE</th>
+              </tr>
+              {data.map((row, i) => {
+                return (
+                  <tr>
+                    <td>{i + 1}</td>
+                    <td>{row.score}</td>
+                  </tr>
+                );
+              })}
+            </table>
+          </div>
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.message === "Request failed with status code 404") {
+          return;
+        }
+      });
+  };
+
   const getQuestion = () =>
     axios
       .get(`/question`)
@@ -470,6 +544,18 @@ function App() {
             path="/leaderboard"
             render={(props) => (
               <LeaderBoard {...props} leaderBoardTable={leaderBoardTable} />
+            )}
+          />
+
+          <Route
+            exact
+            path="/userleaderBoard"
+            render={(props) => (
+              <UserLeaderBoard
+                {...props}
+                userleaderBoardTable={userleaderBoardTable}
+                getUserLeaderBoard={getUserLeaderBoard}
+              />
             )}
           />
         </Switch>

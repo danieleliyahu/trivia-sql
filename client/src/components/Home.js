@@ -3,7 +3,7 @@ import "../App.css";
 import { readCookie, eraseCookie } from "../utils/cookies";
 import axios from "axios";
 
-const Home = ({ leaderBoardTable, setuserName, validUser, setvalidUser }) => {
+const Home = ({ setuserName, validUser, setvalidUser }) => {
   const location = useHistory();
   const deleteToken = () => {
     const token = readCookie("refreshToken");
@@ -24,6 +24,12 @@ const Home = ({ leaderBoardTable, setuserName, validUser, setvalidUser }) => {
       <div className={"loginconteiner"}>
         <h1 className="loginheader">Login</h1>
         <div>
+          {validUser ? (
+            <Link className={"leaderBoardLink"} to="/userleaderBoard">
+              my leaderboard
+            </Link>
+          ) : null}
+
           <Link className={"leaderBoardLink"} to="/leaderboard">
             leaderboard
           </Link>

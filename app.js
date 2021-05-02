@@ -21,27 +21,27 @@ const {
   UserScore,
 } = require("./models");
 
-morgan.token("reqbody", (req) => {
-  const newObject = {};
-  for (const key in req.body) {
-    if (JSON.stringify(req.body[key]).length > 100) {
-      newObject[key] = "Too many to print...";
-      continue;
-    }
-    newObject[key] = req.body[key];
-  }
-  return JSON.stringify(newObject);
-});
+// morgan.token("reqbody", (req) => {
+//   const newObject = {};
+//   for (const key in req.body) {
+//     if (JSON.stringify(req.body[key]).length > 100) {
+//       newObject[key] = "Too many to print...";
+//       continue;
+//     }
+//     newObject[key] = req.body[key];
+//   }
+//   return JSON.stringify(newObject);
+// });
 
 app.use(cors());
 app.use(express.json());
 app.use("/users", users);
 
-app.use(
-  morgan(
-    ":method :url :status :res[content-length] - :response-time ms :reqbody"
-  )
-);
+// app.use(
+//   morgan(
+//     ":method :url :status :res[content-length] - :response-time ms :reqbody"
+//   )
+// );
 app.use(express.static("./client/build"));
 
 const models = [
@@ -74,8 +74,20 @@ app.get("/leaderBoard", (req, res) => {
     limit: 10,
   })
     .then(async (player) => {
-      console.log(player);
       res.send(player);
+    })
+    .catch((err) => console.log(err));
+});
+
+app.post("/userleaderBoard", (req, res) => {
+  const { user_name } = req.body;
+  UserScore.findAll({
+    where: { user_name: user_name },
+    attributes: ["score"],
+    order: [["score", "DESC"]],
+  })
+    .then(async (score) => {
+      res.send(score);
     })
     .catch((err) => console.log(err));
 });
