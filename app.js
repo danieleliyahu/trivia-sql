@@ -21,27 +21,12 @@ const {
   UserScore,
 } = require("./models");
 
-// morgan.token("reqbody", (req) => {
-//   const newObject = {};
-//   for (const key in req.body) {
-//     if (JSON.stringify(req.body[key]).length > 100) {
-//       newObject[key] = "Too many to print...";
-//       continue;
-//     }
-//     newObject[key] = req.body[key];
-//   }
-//   return JSON.stringify(newObject);
-// });
 
 app.use(cors());
 app.use(express.json());
 app.use("/users", users);
 
-// app.use(
-//   morgan(
-//     ":method :url :status :res[content-length] - :response-time ms :reqbody"
-//   )
-// );
+
 app.use(express.static("./client/build"));
 
 const models = [
@@ -66,11 +51,9 @@ app.get("/", (req, res) => {
 app.get("/leaderBoard", (req, res) => {
   UserScore.findAll({
     attributes: [
-      [Sequelize.fn("MAX", Sequelize.col("score")), "score"],
-      "user_name",
+      "score","user_name"
     ],
     order: [["score", "DESC"]],
-    group: ["user_name"],
     limit: 10,
   })
     .then(async (player) => {
