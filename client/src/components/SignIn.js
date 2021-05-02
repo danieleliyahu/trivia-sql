@@ -62,7 +62,7 @@ const SingIn = ({ loggedIn, tokenValidate }) => {
           Dont have an account yet? <Link to="/register"> Join now </Link>
         </p>
       </div>
-      <div className={"error"}>{error}</div>
+      {/* <div className={"error"}>{error}</div> */}
     </>
   );
 };
