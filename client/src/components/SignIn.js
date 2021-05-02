@@ -8,7 +8,7 @@ const SingIn = ({ loggedIn ,tokenValidate}) => {
   const [email, setEmail] = useState();
   const [password, setpassword] = useState();
   const [wrongUser, setwrongUser] = useState();
-
+  const [error, seterror] = useState();
   const location = useHistory();
   const login = ({}) => {
     axios
@@ -18,6 +18,7 @@ const SingIn = ({ loggedIn ,tokenValidate}) => {
       })
       .then((result) => {
         if (result.data === "User or Password incorrect") {
+
           console.log("user not exists");
         } else {
           // console.log(result.data);
@@ -30,9 +31,11 @@ const SingIn = ({ loggedIn ,tokenValidate}) => {
       })
       .catch((err) => {
         console.log(err);
+        seterror("User or Password are incorrect")
       });
   };
   return (
+    <>
     <div>
       <h1>Log In</h1>
       <input
@@ -52,6 +55,8 @@ const SingIn = ({ loggedIn ,tokenValidate}) => {
       <button onClick={login}>Sing in</button>
       {/* {wrongUser} */}
     </div>
+    <div className={"error"}>{error}</div>
+    </>
   );
 };
 

@@ -40,6 +40,10 @@
   font-size: inherit;
   font-weight: inherit;
 }
+.error {
+  color: #ff0000b0;
+  font-size: 14px;
+}
 
 .link {
   color: rgb(171, 174, 197);

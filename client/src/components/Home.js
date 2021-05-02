@@ -21,6 +21,10 @@ const Home = ({ setuserName, validUser, setvalidUser }) => {
 
   return (
     <>
+    <div className={"homeConteiner"}>
+
+    <div>
+    </div >
       <div className={"loginconteiner"}>
         <h1 className="loginheader">Welcome.</h1>
         <h2 className="loginheader2">World's Best Trivia Game.</h2>
@@ -60,6 +64,7 @@ const Home = ({ setuserName, validUser, setvalidUser }) => {
           ) : null}
         </div>
       </div>
+        </div>
     </>
   );
 };
