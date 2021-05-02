@@ -3,7 +3,7 @@ import "../App.css";
 import { readCookie, eraseCookie } from "../utils/cookies";
 import axios from "axios";
 
-const Home = ({ leaderBoardTable, setuserName, setvalidUser }) => {
+const Home = ({ leaderBoardTable, setuserName, validUser, setvalidUser }) => {
   const location = useHistory();
   const deleteToken = () => {
     const token = readCookie("refreshToken");
@@ -24,24 +24,35 @@ const Home = ({ leaderBoardTable, setuserName, setvalidUser }) => {
       <div className={"loginconteiner"}>
         <h1 className="loginheader">Login</h1>
         <div>
-          <Link className={"gameLink"} to="/game">
-            start
-          </Link>
           <Link className={"leaderBoardLink"} to="/leaderboard">
             leaderboard
           </Link>
-          <Link className={"leaderBoardLink"} to="/register">
-            sign up
-          </Link>
-          <Link className={"leaderBoardLink"} to="/signin">
-            log in
-          </Link>
-          <button className={"gameLink"} onClick={deleteToken}>
-            LOG OUT
-          </button>
+
+          {!validUser ? (
+            <Link className={"leaderBoardLink"} to="/register">
+              sign up
+            </Link>
+          ) : null}
+
+          {!validUser ? (
+            <Link className={"leaderBoardLink"} to="/signin">
+              log in
+            </Link>
+          ) : null}
+
+          {validUser ? (
+            <Link className={"leaderBoardLink"} to="/game">
+              start
+            </Link>
+          ) : null}
+
+          {validUser ? (
+            <button className={"gameLink"} onClick={deleteToken}>
+              LOG OUT
+            </button>
+          ) : null}
         </div>
       </div>
-      {leaderBoardTable}
     </>
   );
 };

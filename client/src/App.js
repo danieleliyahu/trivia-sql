@@ -437,6 +437,7 @@ function App() {
                 getPlayerName={getPlayerName}
                 input={input}
                 setuserName={setuserName}
+                validUser={validUser}
                 setvalidUser={setvalidUser}
               />
             )}

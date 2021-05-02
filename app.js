@@ -69,11 +69,12 @@ app.get("/leaderBoard", (req, res) => {
       [Sequelize.fn("MAX", Sequelize.col("score")), "score"],
       "user_name",
     ],
-    group: ["user_name"],
     order: [["score", "DESC"]],
+    group: ["user_name"],
     limit: 10,
   })
     .then(async (player) => {
+      console.log(player);
       res.send(player);
     })
     .catch((err) => console.log(err));
