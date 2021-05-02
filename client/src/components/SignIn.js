@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { createCookie } from "../utils/cookies";
 
-const SingIn = ({ loggedIn ,tokenValidate}) => {
+const SingIn = ({ loggedIn, tokenValidate }) => {
   const [email, setEmail] = useState();
   const [password, setpassword] = useState();
   const [wrongUser, setwrongUser] = useState();
@@ -18,44 +18,51 @@ const SingIn = ({ loggedIn ,tokenValidate}) => {
       })
       .then((result) => {
         if (result.data === "User or Password incorrect") {
-
           console.log("user not exists");
         } else {
-          // console.log(result.data);
           createCookie("accessToken", result.data.accessToken, 1);
           createCookie("refreshToken", result.data.refreshToken, 100);
           loggedIn();
-          tokenValidate()
+          tokenValidate();
           location.push("/game");
         }
       })
       .catch((err) => {
         console.log(err);
-        seterror("User or Password are incorrect")
+        seterror("User or Password are incorrect");
       });
   };
   return (
     <>
-    <div>
-      <h1>Log In</h1>
-      <input
-        onChange={(e) => {
-          setEmail(e.target.value);
-        }}
-        type="email"
-        placeholder="email"
-      />
-      <input
-        onChange={(e) => {
-          setpassword(e.target.value);
-        }}
-        type="password"
-        placeholder="password"
-      />
-      <button onClick={login}>Sing in</button>
-      {/* {wrongUser} */}
-    </div>
-    <div className={"error"}>{error}</div>
+      <div className="signinpage">
+        <h1 className="loginheader">Sign In</h1>
+        <h4 className="loginheader2">play and learn about the world</h4>
+        <form>
+          <input
+            className="loginInput"
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+            type="email"
+            placeholder="email"
+          />
+          <input
+            className="loginInput"
+            onChange={(e) => {
+              setpassword(e.target.value);
+            }}
+            type="password"
+            placeholder="password"
+          />
+          <button className={"link linkButton"} onClick={login}>
+            Sign in
+          </button>
+        </form>
+        <p className="joinnow">
+          Dont have an account yet? <Link to="/register"> Join now </Link>
+        </p>
+      </div>
+      <div className={"error"}>{error}</div>
     </>
   );
 };

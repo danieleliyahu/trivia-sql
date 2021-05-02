@@ -7,6 +7,7 @@
 .screen {
   width: 100%;
   display: inline-block;
+  overflow: hidden;
 }
 
 .halfscreen {
@@ -19,16 +20,19 @@
 }
 
 .hello {
-  /* font-size: 25px; */
+  margin-top: 8px;
+  margin-left: 15px;
+  font-size: 25px;
 }
 
 .loginconteiner {
   height: 100vh;
   width: 40%;
   overflow: hidden;
+  margin-left: 20px;
 }
 
-.loginheader {
+.homeheader {
   margin-top: 100px;
   color: #1c1a5e;
   font-size: 60px;
@@ -36,7 +40,7 @@
   padding: 20px;
 }
 
-.loginheader2 {
+.homeheader2 {
   color: #1c1a5e;
   font-size: 40px;
   padding: 20px;
@@ -50,7 +54,7 @@
   background: none;
   color: inherit;
   border: none;
-  padding-top: 8px;
+  padding-top: 10px;
   font: inherit;
   cursor: pointer;
   outline: inherit;
@@ -85,10 +89,52 @@
   opacity: 0.9;
 }
 
+.signinpage {
+  width: 450px;
+  height: 400px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+  padding: 24px 32px 32px;
+  border-radius: 8px;
+  margin: 0 auto;
+  margin-top: 100px;
+  background: #fff;
+}
+
+.loginheader {
+  font-size: 28px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.9);
+  padding: 0 0 4px 0;
+}
+
+.loginheader2 {
+  font-size: 15px;
+  font-weight: 400;
+  /* line-height: 4px; */
+  color: rgba(0, 0, 0, 0.9);
+}
+
+form {
+  margin: auto;
+  position: relative;
+  display: block;
+}
+
 .loginInput {
-  width: 200px;
-  padding: 10px;
-  margin-bottom: 30px;
+  font-size: 18px;
+  width: 380px;
+  padding: 24px 12px 6px;
+  margin-bottom: 15px;
+  margin-top: 15px;
+  font-weight: 400;
+  border-radius: 4px;
+  background-color: rgb(203, 209, 218);
+}
+
+.joinnow {
+  margin-top: 15px;
+  font-size: 16px;
+  text-align: center;
 }
 
 .navBar {

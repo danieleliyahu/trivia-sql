@@ -22,11 +22,11 @@ const Home = ({ userName, setuserName, validUser, setvalidUser }) => {
   return (
     <>
       <div className="screen">
-        <div className="hello"> hello {userName}</div>
         <div className="halfscreen"> </div>
         <div className={"loginconteiner"}>
-          <h1 className="loginheader">Welcome.</h1>
-          <h2 className="loginheader2">World's Best Trivia Game</h2>
+          <div className="hello"> hello, {userName}</div>
+          <h1 className="homeheader">Welcome.</h1>
+          <h2 className="homeheader2">World's Best Trivia Game</h2>
           <div className="buttons">
             {validUser ? (
               <Link className={"link"} to="/userleaderBoard">
@@ -64,7 +64,6 @@ const Home = ({ userName, setuserName, validUser, setvalidUser }) => {
           </div>
         </div>
       </div>
-        </div>
     </>
   );
 };
