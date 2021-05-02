@@ -53,6 +53,7 @@ function App() {
       )
       .then((result) => {
         if (result.data.valid) {
+          console.log(result.data)
           setvalidUser(result.data.valid);
           setemail(result.data.info.email);
           setuserName(result.data.info.userName);

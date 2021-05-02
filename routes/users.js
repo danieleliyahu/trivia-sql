@@ -76,7 +76,7 @@ users.post("/login", async (req, res) => {
   }
 });
 users.post("/tokenValidate", validateToken, (req, res) => {
-  res.json({ valid: true, info: req.user });
+  res.json({ valid: true,info:req.user});
 });
 users.post("/token", async (req, res) => {
   const { token } = req.body;
@@ -95,18 +95,18 @@ users.post("/token", async (req, res) => {
     if (err) {
       return res.status(403).send("Invalid Refresh Token");
     }
-    const userInfo = await UserScore.findAll({
-      where: { email: decoded.email },
-    });
+    // const userInfo = await UserScore.findAll({
+    //   where: { email: decoded.email },
+    // });
     const { userName, email } = decoded;
     const accessToken = jwt.sign(
-      { userName, email, userInfo },
+      { userName, email },
       process.env.ACCESS_TOKEN_SECRET,
       {
         expiresIn: "10s",
       }
     );
-
+      console.log(accessToken)
     return res.json({ accessToken });
   });
 });

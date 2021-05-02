@@ -16,7 +16,7 @@ function validateToken(req, res, next) {
         console.log(err);
         return res.status(403).send("Invalid Access Token");
       }
-
+      console.log("hiiiiiiiiiiiiiiiiiiii",decoded)
       req.user = decoded;
       next();
     });
