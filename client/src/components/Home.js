@@ -24,7 +24,7 @@ const Home = ({ setuserName, validUser, setvalidUser }) => {
       <div className={"loginconteiner"}>
         <h1 className="loginheader">Welcome.</h1>
         <h2 className="loginheader2">World's Best Trivia Game.</h2>
-        <div>
+        <div className="buttons">
           {validUser ? (
             <Link className={"link"} to="/userleaderBoard">
               my leaderboard
