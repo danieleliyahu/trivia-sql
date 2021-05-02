@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import PopupWindow from "./PopupWindow";
 const Question = ({
   question,
@@ -17,9 +18,12 @@ const Question = ({
       <div className="navBar">
         <span className="playerstate"> Name: {userName}</span>
         <span className="playerstate" ref={strikeRef}>
-          Strikes: {strike}
+          Strikes: {strike !== 3 ? strike : strike}
         </span>
         <span className="playerstate">Score: {score}</span>
+        <Link className={"playerstate"} to="/">
+          HOME
+        </Link>
       </div>
       <div ref={questionContainer}>
         <div>

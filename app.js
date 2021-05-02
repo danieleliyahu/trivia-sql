@@ -85,6 +85,7 @@ app.post("/userleaderBoard", (req, res) => {
     where: { user_name: user_name },
     attributes: ["score"],
     order: [["score", "DESC"]],
+    limit: 10,
   })
     .then(async (score) => {
       res.send(score);

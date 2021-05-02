@@ -1,26 +1,56 @@
 * {
   margin: 0;
   padding: 0;
-  width: 100%;
+  box-sizing: border-box;
 }
+
 .loginconteiner {
-  text-align: center;
   height: 100vh;
-  width: 100vw;
   overflow: hidden;
   background-image: url("./images/blueBackground.webp");
-  background-repeat: round;
   background-size: cover;
-  padding: 50px 0;
 }
 
 .loginheader {
-  margin: auto;
-  width: 50%;
-  margin-top: 10px;
+  margin-top: 100px;
+  color: rgb(235, 235, 238);
+  font-size: 60px;
+  padding: 20px;
+}
+
+.loginheader2 {
   color: rgb(235, 235, 238);
   font-size: 40px;
   padding: 20px;
+}
+
+.linkButton {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  /* font: inherit; */
+  cursor: pointer;
+  outline: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.link {
+  /* width: 20px; */
+  background-color: #fdfdfd;
+  color: rgb(58, 70, 173);
+  padding: 10px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.leaderBoardLink:hover {
+  opacity: 0.9;
 }
 
 .loginInput {
@@ -119,21 +149,6 @@
 
 .gameLink:hover {
   opacity: 0.9;
-}
-.leaderBoardLink:hover {
-  opacity: 0.9;
-}
-.leaderBoardLink {
-  width: 20px;
-  background-color: #fdfdfd;
-  color: rgb(58, 70, 173);
-  padding: 10px 20px;
-  margin: 8px 0;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 20px;
-  font-weight: 700;
 }
 
 .leaderboardcontainer {

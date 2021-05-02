@@ -22,38 +22,39 @@ const Home = ({ setuserName, validUser, setvalidUser }) => {
   return (
     <>
       <div className={"loginconteiner"}>
-        <h1 className="loginheader">Login</h1>
+        <h1 className="loginheader">Welcome.</h1>
+        <h2 className="loginheader2">World's Best Trivia Game.</h2>
         <div>
           {validUser ? (
-            <Link className={"leaderBoardLink"} to="/userleaderBoard">
+            <Link className={"link"} to="/userleaderBoard">
               my leaderboard
             </Link>
           ) : null}
 
-          <Link className={"leaderBoardLink"} to="/leaderboard">
+          <Link className={"link"} to="/leaderboard">
             leaderboard
           </Link>
 
           {!validUser ? (
-            <Link className={"leaderBoardLink"} to="/register">
+            <Link className={"link"} to="/register">
               sign up
             </Link>
           ) : null}
 
           {!validUser ? (
-            <Link className={"leaderBoardLink"} to="/signin">
+            <Link className={"link"} to="/signin">
               log in
             </Link>
           ) : null}
 
           {validUser ? (
-            <Link className={"leaderBoardLink"} to="/game">
+            <Link className={"link"} to="/game">
               start
             </Link>
           ) : null}
 
           {validUser ? (
-            <button className={"gameLink"} onClick={deleteToken}>
+            <button className={"link linkButton"} onClick={deleteToken}>
               LOG OUT
             </button>
           ) : null}
