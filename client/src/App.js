@@ -65,6 +65,18 @@ function App() {
         console.log(err);
       });
   };
+  const refreshToken  = () => {
+    let token = readCookie("refreshToken");
+      axios
+        .post("http://localhost:3001/users/token", {
+          token,
+        })
+        .then((result) => {
+          createCookie("accessToken", result.data.accessToken, 1);
+          tokenValidate();
+        });
+  };
+  
   useEffect(() => {
     const interval = setInterval(() => {
       let token = readCookie("refreshToken");
@@ -77,8 +89,8 @@ function App() {
           tokenValidate();
         });
     }, 9000);
-
     return () => clearInterval(interval);
+   
   });
 
   const onButtonClick = (e) => {
@@ -125,38 +137,6 @@ function App() {
         }
       });
 
-  // const getUserLeaderBoard = () => {
-  //   axios
-  //     .post(`/userleaderBoard`)
-  //     .then(({ data }) => {
-  //       console.log(data);
-  //       setuserLeaderBoardTable(
-  //         <div className="leaderboardcontainer">
-  //           <h1 className="leaderboardheader">LEADER BOARD</h1>
-  //           <table>
-  //             <tr>
-  //               <th>RANK</th>
-  //               <th>BEST SCORE</th>
-  //             </tr>
-  //             {data.map((row, i) => {
-  //               return (
-  //                 <tr>
-  //                   <td>{i + 1}</td>
-  //                   <td>{row.score}</td>
-  //                 </tr>
-  //               );
-  //             })}
-  //           </table>
-  //         </div>
-  //       );
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       if (error.message === "Request failed with status code 404") {
-  //         return;
-  //       }
-  //     });
-  // };
 
   const getUserLeaderBoard = () => {
     axios({
@@ -283,6 +263,8 @@ function App() {
   useEffect(() => {
     getQuestion();
     getLeaderBoard();
+    tokenValidate()
+    refreshToken()
   }, []);
 
   useEffect(() => {
