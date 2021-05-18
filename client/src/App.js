@@ -1,30 +1,97 @@
 import "./App.css";
+import "./Popup.css";
 import axios from "axios";
 import Question from "./components/Question";
-import Login from "./components/Login";
+import Home from "./components/Home";
+import Register from "./components/Register";
+import LeaderBoard from "./components/LeaderBoard";
+import UserLeaderBoard from "./components/UserLeaderBoard";
+import SingIn from "./components/SignIn";
 
+import { readCookie, createCookie } from "./utils/cookies";
 import { shuffleArray, gameOver } from "./utils";
 import { useEffect, useRef, useState } from "react";
 import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
 
 function App() {
   const [answer, setanswer] = useState(null);
-  const [state, setstate] = useState(null);
+  const [popup, setpopup] = useState(null);
   const [popupRateState, setPopupRateState] = useState(null);
-
   const [question, setQuestion] = useState([]);
   const [clientAnswer, setclientAnswer] = useState(null);
   const [count, setcount] = useState(0);
-  const [score, setScore] = useState(0);
   const [strike, setStrike] = useState(0);
   const [input, setInput] = useState();
   const [QuestionInfo, setQuestionInfo] = useState();
   const [leaderBoardTable, setLeaderBoardTable] = useState();
+  const [userleaderBoardTable, setuserLeaderBoardTable] = useState();
+  const [validUser, setvalidUser] = useState();
+  const [user, setuser] = useState();
   const questionContainer = useRef();
   const newgame = useRef();
   const popupvaild = useRef();
-  // const [isSavedQuestion, setIsSavedQuestion] = useState();
+  const [score, setScore] = useState(0);
+  const [userName, setuserName] = useState("guest");
+  const [email, setemail] = useState();
   let rankstate;
+
+  useEffect(() => {
+    tokenValidate();
+  }, [validUser]);
+  const tokenValidate = () => {
+    let token = readCookie("accessToken");
+
+    axios
+      .post(
+        "http://localhost:3001/users/tokenValidate",
+        {},
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        }
+      )
+      .then((result) => {
+        if (result.data.valid) {
+          console.log(result.data);
+          setvalidUser(result.data.valid);
+          setemail(result.data.info.email);
+          setuserName(result.data.info.userName);
+        } else {
+          setvalidUser(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const refreshToken = () => {
+    let token = readCookie("refreshToken");
+    axios
+      .post("http://localhost:3001/users/token", {
+        token,
+      })
+      .then((result) => {
+        createCookie("accessToken", result.data.accessToken, 1);
+        tokenValidate();
+      });
+  };
+
+  useEffect(() => {
+ 
+    const interval = setInterval(() => {
+      let token = readCookie("refreshToken");
+      axios
+        .post("http://localhost:3001/users/token", {
+          token,
+        })
+        .then((result) => {
+          createCookie("accessToken", result.data.accessToken, 1);
+          tokenValidate();
+        });
+    }, 9000);
+    return () => clearInterval(interval);
+  });
 
   const onButtonClick = (e) => {
     setcount(count + 1);
@@ -41,24 +108,27 @@ function App() {
       .get(`/leaderBoard`)
       .then(({ data }) => {
         setLeaderBoardTable(
-          <table>
-            <tr>
-              <th>RANK</th>
-              <th>NAME</th>
-              <th>SCORE</th>
-            </tr>
-            {data.map((row, i) => {
-              return (
-                <tr>
-                  <td>{i + 1}</td>
-                  <td>{row.name}</td>
-                  <td>{row.score}</td>
-                </tr>
-              );
-            })}
-          </table>
+          <div className="leaderboardcontainer">
+            <h1 className="leaderboardheader">LEADER BOARD</h1>
+
+            <table>
+              <tr>
+                <th>RANK</th>
+                <th>NAME</th>
+                <th>BEST SCORE</th>
+              </tr>
+              {data.map((row, i) => {
+                return (
+                  <tr>
+                    <td>{i + 1}</td>
+                    <td>{row.user_name}</td>
+                    <td>{row.score}</td>
+                  </tr>
+                );
+              })}
+            </table>
+          </div>
         );
-        console.log(leaderBoardTable);
       })
       .catch((error) => {
         console.log(error);
@@ -66,12 +136,50 @@ function App() {
           return;
         }
       });
+
+  const getUserLeaderBoard = () => {
+    axios({
+      method: "post",
+      url: "/userleaderBoard",
+      data: {
+        user_name: userName,
+      },
+    })
+      .then(({ data }) => {
+        console.log(data);
+        setuserLeaderBoardTable(
+          <div className="leaderboardcontainer">
+            <h1 className="leaderboardheader">LEADER BOARD</h1>
+            <table>
+              <tr>
+                <th>RANK</th>
+                <th>SCORE</th>
+              </tr>
+              {data.map((row, i) => {
+                return (
+                  <tr>
+                    <td>{i + 1}</td>
+                    <td>{row.score}</td>
+                  </tr>
+                );
+              })}
+            </table>
+          </div>
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.message === "Request failed with status code 404") {
+          return;
+        }
+      });
+  };
+
   const getQuestion = () =>
     axios
       .get(`/question`)
       .then(({ data }) => {
         if (data) {
-          // setIsSavedQuestion(false);
           const fullQuestion = data.map((fullQuestion, i) => {
             if (undefined === fullQuestion.options.answer1) {
               setQuestionInfo(fullQuestion);
@@ -79,6 +187,33 @@ function App() {
             } else {
               setQuestionInfo(fullQuestion);
               setanswer(fullQuestion.options.answer1);
+            }
+            if (typeof fullQuestion.options.answer === "boolean") {
+              return (
+                <>
+                  <div key={i}>
+                    <div className={"questionDiv"}>
+                      <h1 className={"question"}>
+                        {fullQuestion.question.template}
+                      </h1>
+                    </div>
+                    <div className={"option12"}>
+                      <div
+                        onClick={(e) => onButtonClick(e)}
+                        className={"option"}
+                      >
+                        {fullQuestion.options.option1}
+                      </div>
+                      <div
+                        onClick={(e) => onButtonClick(e)}
+                        className={"option"}
+                      >
+                        {fullQuestion.options.option2}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              );
             }
             const options = [
               fullQuestion.options.answer,
@@ -89,21 +224,29 @@ function App() {
             const shuffledOptions = shuffleArray(options);
             return (
               <>
-                <div key={i}>
-                  <h1 className={"question"}>
-                    {fullQuestion.question.template}
-                  </h1>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
-                    {shuffledOptions[0]}
+                <div className={"continer"} key={i}>
+                  <div className={"questionDiv"}>
+                    <h1 className={"question"}>
+                      {fullQuestion.question.template}
+                    </h1>
                   </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
-                    {shuffledOptions[1]}
+                  <div className={"option12"}>
+                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                      {shuffledOptions[0]}
+                    </div>
+
+                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                      {shuffledOptions[1]}
+                    </div>
                   </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
-                    {shuffledOptions[2]}
-                  </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
-                    {shuffledOptions[3]}
+                  <div className={"option34"}>
+                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                      {shuffledOptions[2]}
+                    </div>
+
+                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                      {shuffledOptions[3]}
+                    </div>
                   </div>
                 </div>
               </>
@@ -119,15 +262,15 @@ function App() {
   useEffect(() => {
     getQuestion();
     getLeaderBoard();
+    tokenValidate();
+    refreshToken();
   }, []);
 
   useEffect(() => {
     if ((count % 3 === 0) & (count >= 1)) {
       getSavedQuestion();
-      console.log("im a saved question");
     } else {
       getQuestion();
-      console.log("im a random question");
     }
     if (strike !== 2) {
       ratePopupWindow();
@@ -141,10 +284,18 @@ function App() {
       }
     } else {
       setStrike(strike + 1);
-      console.log(strike);
       if ((strike === 2) & (count >= 1)) {
-        console.log(strike);
-        gameOver(input, score, strike, popupWindow, getLeaderBoard);
+        gameOver(
+          input,
+          score,
+          userName,
+          email,
+          strike,
+          popupWindow,
+          getLeaderBoard,
+          setStrike,
+          setScore
+        );
       }
     }
   }, [count]);
@@ -167,7 +318,6 @@ function App() {
           option3: QuestionInfo.option3,
           answer: QuestionInfo.answer,
           rating: rankstate,
-          // number_of_ratings: 0,
         },
       });
     } else {
@@ -183,7 +333,6 @@ function App() {
           option3: QuestionInfo.options.option3,
           answer: QuestionInfo.options.answer,
           rating: rankstate,
-          // number_of_ratings: 0,
         },
       });
     }
@@ -194,17 +343,33 @@ function App() {
       .get(`/savedQuestion`)
       .then(({ data }) => {
         if (data) {
-          // setIsSavedQuestion(true);
           const fullQuestion = data.map((fullQuestion, i) => {
             fullQuestion.saved = true;
             setQuestionInfo(fullQuestion);
-            setanswer(fullQuestion.answer)
+            setanswer(fullQuestion.answer);
             if (fullQuestion.answer === "0") {
-              setanswer("false")
-              fullQuestion.answer = false
+              setanswer("false");
+              fullQuestion.answer = false;
             } else if (fullQuestion.answer === "1") {
-              setanswer("true")
-              fullQuestion.answer = true
+              setanswer("true");
+              fullQuestion.answer = true;
+            }
+            if (typeof fullQuestion.answer === "boolean") {
+              return (
+                <>
+                  <div key={i}>
+                    <div className={"questionDiv"}>
+                      <h1 className={"question"}>{fullQuestion.template}</h1>
+                    </div>
+                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                      {fullQuestion.option1}
+                    </div>
+                    <div onClick={(e) => onButtonClick(e)} className={"option"}>
+                      {fullQuestion.option2}
+                    </div>
+                  </div>
+                </>
+              );
             }
             const options = [
               fullQuestion.answer,
@@ -216,17 +381,19 @@ function App() {
             return (
               <>
                 <div key={i}>
-                  <h1 className={"question"}>{fullQuestion.template}</h1>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div className={"questionDiv"}>
+                    <h1 className={"question"}>{fullQuestion.template}</h1>
+                  </div>
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[0]}
                   </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[1]}
                   </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[2]}
                   </div>
-                  <div onClick={(e) => onButtonClick(e)} className={"options"}>
+                  <div onClick={(e) => onButtonClick(e)} className={"option"}>
                     {shuffledOptions[3]}
                   </div>
                 </div>
@@ -241,18 +408,9 @@ function App() {
       });
   };
 
-  // const incrementRaitings = () => {
-  //   axios.patch("/questionRating/:id", { id: 1 });
-  // };
-
   const onClickRank = (number) => {
     rankstate = number;
-    // if (isSavedQuestion) {
-    //   // incrementRaitings();
-    // } else {
     postQuestionRating();
-
-    // }
     togglePopup();
   };
   const ratePopupWindow = () => {
@@ -276,17 +434,20 @@ function App() {
       </div>
     );
   };
-
+  const closePopup = () => {
+    setpopup(null);
+  };
   const popupWindow = () => {
-    return setstate(
+    return setpopup(
       <div className="popup active" ref={popupvaild} id="popup-1">
         <div className="overlay "></div>
         <div ref={popupvaild} className="contentPopup active">
-          <div class="close-btn" >
-            <Link to="/" >start</Link>;
+          <div class="close-btn">
+            <Link onClick={() => closePopup()} to="/">
+              start
+            </Link>
           </div>
           <h1>GAME OVER😢</h1>
-          <div>{input}</div>
           <div>{score}</div>
           <div className="closeVaildButton">
             <i className="fas fa-check-circle"></i>
@@ -300,32 +461,82 @@ function App() {
     <div>
       <Router>
         <Switch>
-          <Route
-            exact
-            path="/game"
-            render={(props) => (
-              <Question
-                {...props}
-                question={question}
-                input={input}
-                score={score}
-                strike={strike}
-                questionContainer={questionContainer}
-                newgame={newgame}
-                state={state}
-                popupRateState={popupRateState}
-              />
-            )}
-          />
+          {validUser ? (
+            <Route
+              exact
+              path="/game"
+              render={(props) => (
+                <Question
+                  {...props}
+                  question={question}
+                  input={input}
+                  score={score}
+                  strike={strike}
+                  questionContainer={questionContainer}
+                  newgame={newgame}
+                  popup={popup}
+                  popupRateState={popupRateState}
+                  userName={userName}
+                />
+              )}
+            />
+          ) : (
+            "you need to log in"
+          )}
           <Route
             exact
             path="/"
             render={(props) => (
-              <Login
+              <Home
                 {...props}
                 getPlayerName={getPlayerName}
                 input={input}
-                leaderBoardTable={leaderBoardTable}
+                userName={userName}
+                setuserName={setuserName}
+                validUser={validUser}
+                setvalidUser={setvalidUser}
+              />
+            )}
+          />
+
+          <Route
+            exact
+            path="/register"
+            render={(props) => <Register {...props} />}
+          />
+          <Route
+            exact
+            path="/signin"
+            render={(props) => (
+              <SingIn
+                {...props}
+                loggedIn={() => {
+                  setuser(true);
+                }}
+                tokenValidate={tokenValidate}
+              />
+            )}
+          />
+          <Route path="/game">
+            {user ? <Question /> : <h1>User not logged</h1>}
+          </Route>
+
+          <Route
+            exact
+            path="/leaderboard"
+            render={(props) => (
+              <LeaderBoard {...props} leaderBoardTable={leaderBoardTable} />
+            )}
+          />
+
+          <Route
+            exact
+            path="/userleaderBoard"
+            render={(props) => (
+              <UserLeaderBoard
+                {...props}
+                userleaderBoardTable={userleaderBoardTable}
+                getUserLeaderBoard={getUserLeaderBoard}
               />
             )}
           />

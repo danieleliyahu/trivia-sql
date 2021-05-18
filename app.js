@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+const users = require("./routes/users");
+
 const cors = require("cors");
 const morgan = require("morgan");
 const Sequelize = require("sequelize");
@@ -15,27 +17,16 @@ const {
   Player,
   QuestionTemplate,
   SavedQuestion,
+  User,
+  UserScore,
 } = require("./models");
 
-morgan.token("reqbody", (req) => {
-  const newObject = {};
-  for (const key in req.body) {
-    if (JSON.stringify(req.body[key]).length > 100) {
-      newObject[key] = "Too many to print...";
-      continue;
-    }
-    newObject[key] = req.body[key];
-  }
-  return JSON.stringify(newObject);
-});
 
 app.use(cors());
 app.use(express.json());
-app.use(
-  morgan(
-    ":method :url :status :res[content-length] - :response-time ms :reqbody"
-  )
-);
+app.use("/users", users);
+
+
 app.use(express.static("./client/build"));
 
 const models = [
@@ -58,12 +49,29 @@ app.get("/", (req, res) => {
 });
 
 app.get("/leaderBoard", (req, res) => {
-  Player.findAll({
+  UserScore.findAll({
+    attributes: [
+      "score","user_name"
+    ],
     order: [["score", "DESC"]],
     limit: 10,
   })
     .then(async (player) => {
       res.send(player);
+    })
+    .catch((err) => console.log(err));
+});
+
+app.post("/userleaderBoard", (req, res) => {
+  const { user_name } = req.body;
+  UserScore.findAll({
+    where: { user_name: user_name },
+    attributes: ["score"],
+    order: [["score", "DESC"]],
+    limit: 10,
+  })
+    .then(async (score) => {
+      res.send(score);
     })
     .catch((err) => console.log(err));
 });
@@ -119,7 +127,6 @@ app.get("/question", async (req, res) => {
           limit: 1,
         });
         const names = optionsData.map((data) => {
-          console.log(data.toJSON().name);
           return data.toJSON().name;
         });
 
@@ -147,11 +154,17 @@ app.get("/question", async (req, res) => {
           });
         }
         const name = other3Options.map((data) => {
-          console.log(data.toJSON()[relevantName]);
           return data.toJSON()[relevantName];
         });
-        if(name[0]===undefined || name[1]===undefined || name[2]===undefined || name[0]===names[0] || name[1]===names[0] || name[2]===names[0]){
-        return  randomQuestion()
+        if (
+          name[0] === undefined ||
+          name[1] === undefined ||
+          name[2] === undefined ||
+          name[0] === names[0] ||
+          name[1] === names[0] ||
+          name[2] === names[0]
+        ) {
+          return randomQuestion();
         }
         allTheOption = {
           answer: names[0],
@@ -168,7 +181,6 @@ app.get("/question", async (req, res) => {
           limit: 2,
         });
         const names = optionsData.map((data) => {
-          console.log(data.toJSON().name);
           return data.toJSON().name;
         });
         const rowsFromRelevantTable = await relavantModel.findAll({
@@ -256,7 +268,6 @@ app.get("/question", async (req, res) => {
   }
   if (!randomQuestion()) {
     randomQuestion();
-    console.log("tried again");
   }
 });
 
@@ -267,7 +278,15 @@ app.post("/leaderBoard", async (req, res) => {
     created_at: Date.now(),
     updated_at: Date.now(),
   });
-  console.log(playerRecord);
+});
+app.post("/userscore", async (req, res) => {
+  const userScore = await UserScore.create({
+    email: req.body.email,
+    user_name: req.body.userName,
+    score: req.body.score,
+    created_at: Date.now(),
+    updated_at: Date.now(),
+  });
 });
 
 app.get("/savedQuestion", async (req, res) => {
@@ -280,36 +299,35 @@ app.get("/savedQuestion", async (req, res) => {
   });
   let allQuestions = await SavedQuestion.findAll({});
 
-  let questionChance = await allQuestions.map((question,i) => {
+  let questionChance = await allQuestions.map((question, i) => {
     let questionWithTotalRating = {
       ...question.toJSON(),
       chance: question.toJSON().rating / totalRating[0].toJSON().total_rating,
     };
-    return {...questionWithTotalRating};
+    return { ...questionWithTotalRating };
   });
-  console.log(questionChance)
   function weightedRandom(prob) {
-    let i, sum=0, r=Math.random();
+    let i,
+      sum = 0,
+      r = Math.random();
     for (i in prob) {
       sum += prob[i];
       if (r <= sum) return i;
     }
   }
 
-let object = questionChance.reduce(
-  (obj, item) => Object.assign(obj, { [JSON.stringify(item)]: item.chance}), {});
+  let object = questionChance.reduce(
+    (obj, item) => Object.assign(obj, { [JSON.stringify(item)]: item.chance }),
+    {}
+  );
 
-console.log(object)
-
-    let QuestionByChanceweightedRandom = weightedRandom(object)
+  let QuestionByChanceweightedRandom = weightedRandom(object);
 
   res.json([JSON.parse(QuestionByChanceweightedRandom)]);
 });
 
 app.post("/rating", async (req, res) => {
   const lastRatedQuestion = req.body;
-  console.log(lastRatedQuestion, "lastRatedQuestion");
-
   const foundQuestion = await SavedQuestion.findOne({
     where: {
       [Op.and]: [
@@ -340,7 +358,6 @@ app.post("/rating", async (req, res) => {
     };
   }
 
-  console.log(questionToInsert, "questionToInsert");
   SavedQuestion.upsert(questionToInsert, {
     where: {
       [Op.and]: [

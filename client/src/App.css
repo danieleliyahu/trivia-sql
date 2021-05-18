@@ -1,137 +1,260 @@
-.popup-container {
-  display: grid;
-  grid-template-columns: repeat(5, auto);
-  grid-gap: 10px;
-  display: inline-flex;
-}
-.popup-containerDiv {
-  overflow: auto;
-  background-color: rgb(33 31 31 / 65%);
-  position: sticky;
-  position: fixed;
-  bottom: 0px;
-  width: 100%;
-  height: 10%;
-  animation: 0.5s ease-out 0s 1 slideInFromRight forwards;
-}
-.submitInput {
-  color: white;
-  background-color: red;
-  border-radius: 0px;
-}
-.popup-title {
-  color: white;
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-.button-remove-defuelt {
-  float: right;
-  border: none;
-  background: fixed;
-}
-.arowDown {
-  background: fixed;
-  position: fixed;
-  bottom: 5px;
-  right: 6px;
-}
-.fa-chevron-circle-down {
-  color: white;
-  font-size: 2.5vh;
-  cursor: pointer;
-}
-.fa-arrow-circle-up {
-  color: white;
-  font-size: 2.5vh;
-  cursor: pointer;
-}
-.popup-input::placeholder {
-  /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: red;
-  opacity: 1; /* Firefox */
-}
-.popup-input {
-  border-radius: 6px;
-  border: solid 1px red;
-  /* border-color: red; */
-  direction: RTL;
-  font-size: 1.5rem;
-}
-/* .popup-input{
-
-} */
-/* .slide-in-from-right {
-  
-} */
-
-.unshow {
-  display: none;
-}
-
-@keyframes slideInFromRight {
-  0% {
-    transform: translateY(50%);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-.popup .overlay {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 1;
-  display: none;
-}
-
-.popup .contentPopup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  background: #fff;
-  width: 500px;
-  height: 250px;
-  z-index: 2;
-  text-align: center;
-  padding: 20px;
+* {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
-  font-family: "Open Sans", sans-serif;
 }
 
-.popup .close-btn {
-  cursor: pointer;
-  position: absolute;
-  right: 20px;
-  top: 20px;
-  width: 30px;
-  height: 30px;
-  background: #222;
-  color: #fff;
+.screen {
+  width: 100%;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.halfscreen {
+  float: right;
+  width: 60%;
+  background-image: url("./images/blueBackground.webp");
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+}
+
+.hello {
+  margin-top: 8px;
+  margin-left: 15px;
   font-size: 25px;
-  font-weight: 600;
-  line-height: 30px;
-  text-align: center;
-  border-radius: 50%;
 }
 
-.popup.active .overlay {
+.loginconteiner {
+  height: 100vh;
+  width: 40%;
+  overflow: hidden;
+  margin-left: 20px;
+}
+
+.homeheader {
+  margin-top: 100px;
+  color: #1c1a5e;
+  font-size: 60px;
+  font-weight: 900;
+  padding: 20px;
+}
+
+.homeheader2 {
+  color: #1c1a5e;
+  font-size: 40px;
+  padding: 20px;
+}
+
+.buttons {
+  width: max-content;
+}
+
+.linkButton {
+  background: none;
+  color: inherit;
+  border: none;
+  padding-top: 10px;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  width: inherit;
+  color: #121256;
+}
+.error {
+  color: #ff0000b0;
+  font-size: 14px;
+}
+
+.link {
+  width: 300px;
+  height: 45px;
+  color: #e8e8ee;
+  padding-top: 8px;
+  margin: 8px 15px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 20px;
+  text-transform: uppercase;
+  display: block;
+  background-color: #121256;
+  border-radius: 32px;
+  text-align: center;
+  transition: all 0.1s ease-in-out;
+}
+
+.link:hover {
+  opacity: 0.9;
+}
+
+.signinpage {
+  width: 450px;
+  height: 440px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+  padding: 24px 32px 32px;
+  border-radius: 8px;
+  margin: 0 auto;
+  margin-top: 100px;
+  background: #fff;
+}
+
+.loginheader {
+  font-size: 28px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.9);
+  padding: 0 0 4px 0;
+}
+
+.loginheader2 {
+  font-size: 15px;
+  font-weight: 400;
+  /* line-height: 4px; */
+  color: rgba(0, 0, 0, 0.9);
+}
+
+form {
+  margin: auto;
+  position: relative;
   display: block;
 }
 
-.popup.active .contentPopup {
-  transition: all 300ms ease-in-out;
-  transform: translate(-50%, -50%) scale(1);
+.loginInput {
+  font-size: 18px;
+  width: 380px;
+  padding: 24px 12px 6px;
+  margin-bottom: 15px;
+  margin-top: 15px;
+  font-weight: 400;
+  border-radius: 4px;
+  background-color: rgb(203, 209, 218);
 }
 
-.fa-check-circle {
-  color: green;
-  height: 50%;
-  margin-top: 40px;
+.joinnow {
+  margin-top: 15px;
+  font-size: 16px;
+  text-align: center;
 }
-.fa-check-circle.svg-inline--fa.fa-w-16 {
-  width: 23%;
+
+.navBar {
+  background-color: black;
+  color: white;
+  padding: 25px;
+  width: 100%;
+  height: 25px;
+}
+
+.playerstate {
+  background-color: black;
+  color: white;
+  margin-right: 10px;
+  display: inline;
+}
+.container {
+  margin: auto;
+  width: 60%;
+  margin-top: 60px;
+}
+
+.question {
+  margin: auto;
+  width: 50%;
+  padding: 50px;
+}
+
+.option {
+  margin: auto;
+  width: 50%;
+  padding: 20px;
+  font-size: 20px;
+  border: 1px solid;
+  background-image: url("./images/blueBackground.webp");
+  color: white;
+  text-align: center;
+}
+
+.option:hover {
+  cursor: pointer;
+  opacity: 0.4;
+}
+
+.option12 {
+  display: flex;
+}
+.option34 {
+  display: flex;
+}
+.questionDiv {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  background-image: url("./images/questionBackground.png");
+  color: white;
+  margin-bottom: 50px;
+}
+
+.gameLink {
+  width: 20px;
+  background-color: #fdfdfd;
+  color: rgb(58, 70, 173);
+  padding: 10px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 700;
+  border-right: 4px solid rgb(58, 70, 173);
+}
+
+.gameLink:hover {
+  opacity: 0.9;
+}
+
+.leaderboardcontainer {
+  margin: auto;
+  width: 50%;
+}
+
+.leaderboardheader {
+  margin: auto;
+  width: 50%;
+  margin-top: 10px;
+  color: rgb(7, 7, 83);
+  font-size: 40px;
+  padding: 20px;
+}
+
+table {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 80%;
+  text-align: center;
+  align-self: center;
+  table-layout: fixed;
+}
+
+table td,
+table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+table tr:hover {
+  background-color: #ddd;
+}
+
+table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: rgb(7, 7, 83);
+  color: white;
+  text-align: center;
 }
