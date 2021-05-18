@@ -18,10 +18,10 @@
    - `npx sequelize db:migrate` // this will create the tables in your mysql workbench
    - `npx sequelize db:seed:all` // this will populate the tables with data
 
-7. In the terminal go to the `TRIVIA-SQL` folder and run `npm run dev`.
+6. In the terminal go to the `TRIVIA-SQL` folder and run `npm run dev`.
 
-8. Open another terminal, go to the `client` folder , run `npm start` and this will open the trivia in the browser.
+7. Open another terminal, go to the `client` folder , run `npm start` and this will open the trivia in the browser.
 
-9.start playing
+8.start playing
 
 ## have fun 😀
